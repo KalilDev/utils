@@ -8,35 +8,7 @@ import 'type.dart';
 extension MaybeIterableCatamorph<T> on Iterable<Maybe<T>> {
   /// Catamorph an iterable of [Maybe<T>]s into an iterable of [T], keeping the
   /// [Just] values and discarding the [None] values.
-  Iterable<T> cataMaybes() => whereType<Just<T>>().map((j) => j.valueOrGet(
-        () => throw 'Unreachable',
-      ));
-}
-
-/// Extension for traversing an list and using [Maybe] to represent the result.
-extension MaybeListTraverse<T> on List<T> {
-  /// Traverses an list trying to map the elements with [tryMap], returning
-  /// [None] if either the list was empty or the result of every mapping
-  /// operation was [None].
-  @Deprecated('Use mapMaybe')
-  Maybe<List<U>> traverse<U>(Maybe<U> /*!*/ Function(T) tryMap) =>
-      mapMaybe(tryMap);
-
-  /// Traverses an list trying to map the elements with [tryMap], returning
-  /// [None] if either the list was empty or the result of every mapping
-  /// operation was [None].
-  Maybe<List<U>> mapMaybe<U>(Maybe<U> /*!*/ Function(T) tryMap) {
-    final results = <U>[];
-    for (var i = 0; i < length; i++) {
-      final v = this[i];
-      (tryMap is Maybe<U> Function(T, [int]) ? tryMap(v, i) : tryMap(v))
-          .visit(just: results.add);
-    }
-    if (results.isEmpty) {
-      return None<List<U>>();
-    }
-    return Just<List<U>>(results);
-  }
+  Iterable<T> cataMaybes() => expand((e) => e.toList());
 }
 
 /// Extension for traversing any iterable and using [Maybe] to represent the
@@ -53,19 +25,8 @@ extension MaybeIterableTraverse<T> on Iterable<T> {
   /// [None] if either the iterable was empty or the result of every mapping
   /// operation was [None].
   Maybe<List<U>> mapMaybe<U>(Maybe<U> Function(T) tryMap) {
-    if (this is List<T>) {
-      // use the specialized list version
-      return (this as List<T>).mapMaybe<U>(tryMap);
-    }
-    final results = <U>[];
-    var i = 0;
-    for (final v in this) {
-      final result =
-          tryMap is Maybe<U> Function(T, [int]) ? tryMap(v, i) : tryMap(v);
-      result.visit(just: results.add);
-      i++;
-    }
-    return results.isEmpty ? None<List<U>>() : Just(results);
+    final results = expand((e) => tryMap(e).toList());
+    return results.isEmpty ? None<List<U>>() : Just(results.toList());
   }
 }
 
@@ -122,7 +83,7 @@ extension MaybeObjectWrapping<T> on T {
   Maybe<T1> maybeAs<T1>() => this is T1 ? Just<T1>(this as T1) : None<T1>();
 }
 
-extension EitherToMaybe<A, T> on Either<A, T> {
+extension EitherToMaybe<T> on Either<dynamic, T> {
   Maybe<T> toMaybe() {
     return visit<Maybe<T>>(
       a: (_) => None<T>(),
@@ -237,19 +198,29 @@ abstract class Maybe<T> extends Monad<T> {
 
   /// In case theres a value, keep it in case the [predicate] is [true],
   /// otherwise return [None].
-  Maybe<T> filter(bool /*!*/ Function(T) predicate /*!*/) => visit<Maybe<T>>(
+  @Deprecated('Use where, as it matches the function on Iterable')
+  Maybe<T> filter(bool /*!*/ Function(T) predicate /*!*/) => where(predicate);
+
+  /// In case theres a value, keep it in case the [predicate] is [true],
+  /// otherwise return [None].
+  Maybe<T> where(bool /*!*/ Function(T) predicate /*!*/) => visit<Maybe<T>>(
         just: (v) => predicate(v) ? this : none<T>(),
         none: () => this,
       );
 
   /// In case theres a value, keep it only if it is not [null], otherwise
   /// return [None].
-  Maybe<T> filterNonNullable() => filter((v) => v != null);
+  @Deprecated('Use whereNotNull, as it has an better name')
+  Maybe<T> filterNonNullable() => whereNotNull();
+
+  /// In case theres a value, keep it only if it is not [null], otherwise
+  /// return [None].
+  Maybe<T> whereNotNull() => where((v) => v != null);
 
   /// In case this is [None], add the [value], resulting in a [Just], otherwise
   /// keep the current value.
-  Just<T> fillWhenNone(T value) =>
-      visit<Just<T>>(just: (_) => this as Just<T>, none: () => just(value));
+  Maybe<T> fillWhenNone(T value) =>
+      visit<Maybe<T>>(just: (_) => this, none: () => just(value));
 
   /// In case this is [None], return [other], otherwise keep the current value.
   Maybe<T> maybeFill(Maybe<T> other) =>
@@ -269,8 +240,7 @@ abstract class Maybe<T> extends Monad<T> {
   T valueOrGet(T Function() /*!*/ get) => visit<T>(just: _identity, none: get);
 
   /// Apply the visitor callbacks for the respective type if they are present.
-  @optionalTypeArgs
-  T1 visit<T1>({T1 Function(T) /*?*/ just, T1 Function() /*?*/ none});
+  T1 visit<T1>({@required T1 Function(T) just, @required T1 Function() none});
 
   @override
   Maybe<B> lift<A, B>(Maybe<B Function(A)> fn, Maybe<A> a) =>
