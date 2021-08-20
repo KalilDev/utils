@@ -2,28 +2,36 @@ library utils.pattern;
 
 import 'package:meta/meta.dart';
 
+const _reason = 'The library utils.pattern is being deprecated as it is really '
+    'exotic, there are better ways of expressing the matches.';
+
 /// Matches just the values contained in the [Iterable] [values].
+@Deprecated(_reason)
 _InertPattern<T> values<T>(Iterable<T> values) => _InertPattern<T>(
       (v) => values.contains(v),
     );
 
 /// Matches just the value [value].
+@Deprecated(_reason)
 _InertPattern<T> value<T>(T value) => _InertPattern<T>(
       (v) => v == value,
     );
 
 /// Matches when the predicate [matches] evaluates to true.
+@Deprecated(_reason)
 _InertPattern<T> when<T>(bool Function(T value) matches) => _InertPattern<T>(
       matches,
     );
 
 /// Matches just values of the type [T].
+@Deprecated(_reason)
 _InertPattern<T> type<T>() => _InertPattern<T>(
       (_) => true,
     );
 
 /// Calls the function [fn] [T] -> [R] if the pattern from the optional
 /// parameters, with none being [type<T>], is matched.
+@Deprecated(_reason)
 _EvaluatablePattern<R, T> mapper<T, R>(
   R Function(T) fn, {
   T value,
@@ -51,6 +59,7 @@ Null _throwOnDuplicatedMatcher() => throw ArgumentError(
 
 /// Calls the endofunction [fn] [T] -> [T] if the pattern from the optional
 /// parameters, with none being [type<T>], is matched.
+@Deprecated(_reason)
 _EvaluatablePattern<T, T> endoMap<T>(
   T Function(T) fn, {
   T value,
@@ -66,6 +75,7 @@ _EvaluatablePattern<T, T> endoMap<T>(
 
 /// Calls the void callback [fn] [T] -> [void] if the pattern from the optional
 /// parameters, with none being [type<T>], is matched.
+@Deprecated(_reason)
 _EvaluatablePattern<void, T> doWhen<T>(
   void Function(T) fn, {
   T value,
@@ -81,6 +91,7 @@ _EvaluatablePattern<void, T> doWhen<T>(
 
 /// Matches anything that was not handled previously. Behaves like 'default' on
 /// an switch.
+@Deprecated(_reason)
 final _InertPattern<Object /*?*/ > any = type<Object /*?*/ >();
 
 /// Wraps an [value] for pattern matching.
@@ -96,6 +107,7 @@ final _InertPattern<Object /*?*/ > any = type<Object /*?*/ >();
 ///  ]);
 /// ```
 // ignore: camel_case_types
+@Deprecated(_reason)
 class match<T> {
   final T _value;
 
@@ -175,10 +187,9 @@ match<T> _wrapWithMatch<T>(T value) => match<T>(value);
 /// class before.
 extension ObjectPatternMatching<T> on T {
   /// Evaluates the patterns in an object.
+  @Deprecated(_reason)
   R match<R>(Iterable<_Pattern> patterns) =>
       _wrapWithMatch<T>(this).eval<R>(patterns);
-  T fmapOn<T1>(T Function(T1) fn) => this is T1 ? fn(this as T1) : this;
-  T1 fmap<T1>(T1 Function(T) fn) => fn(this);
 }
 
 abstract class _Pattern<T> {
