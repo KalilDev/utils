@@ -1,6 +1,6 @@
 name: utils
 description: An collection with Functional utils and some data structures
-version: 1.0.1
+version: 1.2.0
 homepage: https://github.com/kalildev
 
 environment:
