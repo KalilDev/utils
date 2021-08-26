@@ -36,7 +36,7 @@ abstract class InjectorScope {
       InjectorScopeImpl.debug;
 
   /// Get the injected instance of type [T]
-  T get<T>();
+  T/*!*/ get<T>();
 
   /// Get the instance of type [t], without any static type safety.
   dynamic getUntyped(Type t);
@@ -113,7 +113,7 @@ abstract class IInjectDependencies implements IAmAnDependencyTreeNode {
   List<Type> get dependencies;
 
   /// Get an [T] dependency from the [Injector].
-  T get<T>();
+  T/*!*/ get<T>();
 
   /// Get an untyped [t] dependency from the [Injector].
   dynamic getUntyped(Type t);
@@ -264,13 +264,13 @@ class Dependency {
 class DependencyGraphNode extends GraphNode<Dependency> {
   /// Create an [DependencyGraphNode] with an [Dependency] value.
   DependencyGraphNode(this.value);
-  final _edges = <DependencyGraphNode>{};
+  final _edges = <DependencyGraphNode/*!*/>{};
 
   @override
-  void addEdge(DependencyGraphNode edge) => _edges.add(edge);
+  void addEdge(DependencyGraphNode/*!*/ edge) => _edges.add(edge);
 
   @override
-  Set<DependencyGraphNode> get edges => _edges;
+  Set<DependencyGraphNode/*!*/> get edges => _edges;
 
   @override
   final Dependency value;
@@ -298,7 +298,7 @@ class DependencyTreeNode extends TreeNode<Dependency> {
   final Maybe<Type> type;
 
   /// Convert this dependency tree to an dependency graph.
-  Graph<Dependency, DependencyGraphNode> toGraph({
+  Graph<Dependency, DependencyGraphNode/*!*/> toGraph({
     TreeToGraphLinkType linkType = TreeToGraphLinkType.direct,
   }) =>
       treeToGraph(
@@ -314,7 +314,7 @@ class DependencyTreeNode extends TreeNode<Dependency> {
 
   @override
   Dependency get value {
-    ValueKind kind;
+    ValueKind/*?*/ kind;
     if (self is Consumer) {
       kind ??= ValueKind.proxyNode;
     }

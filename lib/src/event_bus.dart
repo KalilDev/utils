@@ -5,12 +5,12 @@ import '../event_bus.dart';
 
 /// The actual implementation of [EventBus]
 class EventBusImpl implements EventBus {
-  final StreamController<Object> _eventsController =
+  final StreamController<Object/*!*/> _eventsController =
       StreamController.broadcast();
-  final StreamController<Object> _unhandledController =
+  final StreamController<Object/*!*/> _unhandledController =
       StreamController.broadcast();
   final List<_Listener> _listeners = [];
-  final Map<Type, Object> _lastEvent = {};
+  final Map<Type, Object/*!*/> _lastEvent = {};
   bool _closed = false;
 
   void _maybeCache<T>(T event) {
@@ -151,7 +151,7 @@ abstract class _Listener {
 
   bool canAdd(Type eventType);
 
-  void addError(Object error);
+  void addError(Object/*!*/ error);
 
   void addEvent(dynamic event);
 

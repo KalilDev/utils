@@ -10,16 +10,16 @@ class UndoTreeEventSourcedModelCodec<
         S extends EventSourcedSnapshot<S, B, E>,
         B extends EventSourcedSnapshotBuilder<S, B, E>,
         E extends UndoableEventSourcedEvent<S, B, E>>
-    extends Codec<UndoTreeEventSourcedModel<S, B, E>, Map<String, dynamic>> {
+    extends Codec<UndoTreeEventSourcedModel<S/*!*/, B, E/*!*/>, Map<String, dynamic>> {
   /// Create an [UndoTreeEventSourcedModelCodec].
   const UndoTreeEventSourcedModelCodec();
 
-  Codec<UndoTree<E>, Map<String, dynamic>> get _undoTreeCodec =>
+  Codec<UndoTree<E/*!*//*?*/>/*!*/, Map<String, dynamic>> get _undoTreeCodec =>
       UndoTreeCodec<E>();
 
   @override
-  Converter<Map<String, dynamic>, UndoTreeEventSourcedModel<S, B, E>>
-      get decoder => ConverterFn((m) => UndoTreeEventSourcedModel<S, B, E>._(
+  Converter<Map<String, dynamic>, UndoTreeEventSourcedModel<S, B, E/*!*/>>
+      get decoder => ConverterFn((m) => UndoTreeEventSourcedModel<S, B, E/*!*/>._(
             initialState: ArgumentError.checkNotNull(m['initialState'] as S),
             state: m['state'] as S,
             tree: _undoTreeCodec.decode(ArgumentError.checkNotNull(
@@ -41,19 +41,19 @@ class UndoTreeEventSourcedModelCodec<
 class UndoTreeEventSourcedModel<
         S extends EventSourcedSnapshot<S, B, E>,
         B extends EventSourcedSnapshotBuilder<S, B, E>,
-        E extends UndoableEventSourcedEvent<S, B, E>>
+        E extends UndoableEventSourcedEvent<S, B, E>/*!*/>
     extends TreeUndoableEventSourcedModel<S, B, E> {
   /// Create an [UndoTreeEventSourcedModel] from an [initialState]
   UndoTreeEventSourcedModel(S initialState)
       : _tree = UndoTree<E>()..add(null),
         super(initialState);
 
-  UndoTreeEventSourcedModel._({S initialState, S state, UndoTree<E> tree})
+  UndoTreeEventSourcedModel._({S/*!*/ initialState, S/*!*/ state, UndoTree<E/*?*/>/*!*/ tree})
       : _tree = tree,
         _snapshot = state,
         super(initialState);
 
-  final UndoTree<E> _tree;
+  final UndoTree<E>/*!*/ _tree;
 
   @override
   S add(E event) {
@@ -138,8 +138,8 @@ class UndoTreeEventSourcedModel<
   E get currentEvent => _tree.current?.entry;
 
   @override
-  S get snapshot => _snapshot ?? initialState;
-  S _snapshot;
+  S/*!*/ get snapshot => _snapshot ?? initialState;
+  S/*!*/ _snapshot;
 
   @override
   Codec<UndoTreeEventSourcedModel<S, B, E>, Map<String, dynamic>> get codec =>

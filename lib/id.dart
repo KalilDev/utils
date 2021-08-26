@@ -12,7 +12,7 @@ class Id<A> extends Monad<A> {
   static Id<A> ret<A>(A value) => Id(value);
 
   @override
-  Id<A1> identity<A1>([A1 value]) => Id<A1>(value);
+  Id<A1/*!*/> identity<A1>([A1/*!*/ value]) => Id<A1/*!*/>(value);
 
   @override
   Id<A1> unit<A1>(A1 value) => Id(value);

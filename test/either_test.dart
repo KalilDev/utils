@@ -32,15 +32,11 @@ void main() {
       expect(Either.fromComputation(() => 'Hello').getR(_fail), 'Hello');
     });
     test('fromComputation', () {
-      expect(Either.fromComputation(() => throw Exception(), lazy: false),
-          isA<Left>());
-      expect(
-          Either.fromComputation(() => throw Exception(), lazy: false)
-              .getL(_fail),
+      expect(Either.fromComputation(() => throw Exception()), isA<Left>());
+      expect(Either.fromComputation(() => throw Exception()).getL(_fail),
           isA<Exception>());
-      expect(Either.fromComputation(() => 'Hello', lazy: false), isA<Right>());
-      expect(Either.fromComputation(() => 'Hello', lazy: false).getR(_fail),
-          'Hello');
+      expect(Either.fromComputation(() => 'Hello'), isA<Right>());
+      expect(Either.fromComputation(() => 'Hello').getR(_fail), 'Hello');
     });
 
     const lv = 1;

@@ -2,7 +2,7 @@ part of '../undotree.dart';
 
 /// This [Codec] encodes an [UndoTree] into an json compatible map, and decodes
 /// into an fresh [UndoTree].
-class UndoTreeCodec<E> extends Codec<UndoTree<E>, Map<String, dynamic>> {
+class UndoTreeCodec<E> extends Codec<UndoTree<E>/*!*/, Map<String, dynamic>> {
   @override
   final UndoTreeDecoder<E> decoder = UndoTreeDecoder<E>();
 

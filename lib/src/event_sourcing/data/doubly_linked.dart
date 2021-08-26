@@ -5,7 +5,7 @@ import '../converter_function.dart';
 import '../event_sourcing.dart';
 
 Iterable<DoubleLinkedQueueEntry<E>> _walkDoublyLinkedList<E>(
-    DoubleLinkedQueueEntry<E> list) sync* {
+    DoubleLinkedQueueEntry<E>/*!*/ list) sync* {
   DoubleLinkedQueueEntry<E> tail;
   for (var cursor = list; cursor != null; cursor = cursor.previousEntry()) {
     tail = cursor;
@@ -21,13 +21,13 @@ class DoublyLinkedEventSourcedModelCodec<
         S extends EventSourcedSnapshot<S, B, E>,
         B extends EventSourcedSnapshotBuilder<S, B, E>,
         E extends UndoableEventSourcedEvent<S, B, E>>
-    extends Codec<DoublyLinkedEventSourcedModel<S, B, E>,
+    extends Codec<DoublyLinkedEventSourcedModel<S/*!*/, B, E>,
         Map<String, dynamic>> {
   /// Create an [DoublyLinkedEventSourcedModelCodec].
   const DoublyLinkedEventSourcedModelCodec();
 
   @override
-  Converter<Map<String, dynamic>, DoublyLinkedEventSourcedModel<S, B, E>>
+  Converter<Map<String, dynamic>, DoublyLinkedEventSourcedModel<S/*!*/, B, E>>
       get decoder => ConverterFn((m) {
             final cursorI = ArgumentError.checkNotNull(m['cursorIndex'] as int);
             final entries =
@@ -80,7 +80,7 @@ class DoublyLinkedEventSourcedModelCodec<
 /// An [UndoableEventSourcedModel] which uses an [DoubleLinkedQueueEntry] as the
 /// backing data structure.
 class DoublyLinkedEventSourcedModel<
-        S extends EventSourcedSnapshot<S, B, E>,
+        S extends EventSourcedSnapshot<S, B, E>/*!*/,
         B extends EventSourcedSnapshotBuilder<S, B, E>,
         E extends UndoableEventSourcedEvent<S, B, E>>
     extends UndoableEventSourcedModel<S, B, E> {
@@ -90,7 +90,7 @@ class DoublyLinkedEventSourcedModel<
         super(initialState);
 
   DoublyLinkedEventSourcedModel._(
-      {S initialState, S state, DoubleLinkedQueueEntry<E> cursor})
+      {S/*!*/ initialState, S/*!*/ state, DoubleLinkedQueueEntry<E> cursor})
       : _eventCursor = cursor,
         _snapshot = state,
         super(initialState);
@@ -178,8 +178,8 @@ class DoublyLinkedEventSourcedModel<
   }
 
   @override
-  S get snapshot => _snapshot ?? initialState;
-  S _snapshot;
+  S/*!*/ get snapshot => _snapshot ?? initialState;
+  S/*!*/ _snapshot;
 
   @override
   Codec<EventSourcedModel<S, B, E>, Map<String, dynamic>> get codec =>

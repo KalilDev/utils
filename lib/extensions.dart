@@ -9,7 +9,7 @@ import 'type.dart';
 
 /// python-like range object
 // ignore: camel_case_types
-class range extends Iterable<int> {
+class range extends Iterable<int /*!*/ > {
   const range(
     this.end, [
     this.start = 0,
@@ -33,7 +33,7 @@ class range extends Iterable<int> {
   int get length => (end - start + (crescent ? -1 : 1)) ~/ step + 1;
 
   @override
-  Iterator<int> get iterator => _RangeIterator(this);
+  Iterator<int /*!*/ > get iterator => _RangeIterator(this);
 }
 
 /// An Infinite iterable filled with the value [_value]
@@ -59,11 +59,11 @@ class _InfiniteIterator<T> implements Iterator<T> {
   bool moveNext() => true;
 }
 
-class _RangeIterator extends Iterator<int> {
+class _RangeIterator extends Iterator<int /*!*/ > {
   _RangeIterator(this._self);
   final range _self;
 
-  int _i;
+  int /*?*/ _i;
 
   @override
   int get current => _i;

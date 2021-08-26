@@ -61,10 +61,10 @@ abstract class GraphNode<T> extends Node<T> {
   Set<GraphNode<T>> get edges;
 
   /// Add an new edge to this [GraphNode].
-  void addEdge(covariant GraphNode<T> edge);
+  void addEdge(covariant GraphNode<T>/*!*/ edge);
 }
 
-abstract class Graph<T, Node extends GraphNode<T>> {
+abstract class Graph<T, Node extends GraphNode<T>/*!*/> {
   /// Get an iterable of every [Node] in the graph. Every node will be emitted
   /// exactly once.
   Iterable<Node> nodes();
@@ -78,10 +78,10 @@ abstract class Graph<T, Node extends GraphNode<T>> {
   );
 }
 
-NewGraph _createOrGetMappedNode<T, NewGraph extends GraphNode<Object>>(
-  GraphNode<T> root,
+NewGraph/*!*/ _createOrGetMappedNode<T, NewGraph extends GraphNode<Object/*!*/>>(
+  GraphNode<T>/*!*/ root,
   NewGraph Function(T) createNode,
-  Map<GraphNode<T>, NewGraph> context,
+  Map<GraphNode<T>/*!*/, NewGraph> context,
 ) {
   if (context.containsKey(root)) {
     return context[root];
@@ -98,7 +98,7 @@ NewGraph _createOrGetMappedNode<T, NewGraph extends GraphNode<Object>>(
   return newNode;
 }
 
-class NodesGraph<T, Node extends GraphNode<T>> extends Graph<T, Node> {
+class NodesGraph<T, Node extends GraphNode<T>/*!*/> extends Graph<T, Node> {
   NodesGraph(this._nodes);
   final List<Node> _nodes;
 
@@ -106,7 +106,7 @@ class NodesGraph<T, Node extends GraphNode<T>> extends Graph<T, Node> {
   Iterable<Node> nodes() => _nodes;
 
   @override
-  Graph<T1, NewNode> map<T1, NewNode extends GraphNode<T1>>(
+  Graph<T1, NewNode/*!*/> map<T1, NewNode extends GraphNode<T1>>(
     NewNode Function(T) createNode,
   ) {
     ArgumentError.checkNotNull(createNode);
@@ -118,13 +118,13 @@ class NodesGraph<T, Node extends GraphNode<T>> extends Graph<T, Node> {
   }
 }
 
-class RootGraph<T, Node extends GraphNode<T>> extends Graph<T, Node> {
+class RootGraph<T, Node extends GraphNode<T>/*!*/> extends Graph<T, Node> {
   RootGraph(this._root);
   final Node _root;
 
   Iterable<Node> _graphNodes(
     Node root, {
-    Set<Node> visited,
+    Set<Node>/*!*/ visited,
   }) sync* {
     visited ??= {};
     if (!visited.contains(root)) {
@@ -140,12 +140,12 @@ class RootGraph<T, Node extends GraphNode<T>> extends Graph<T, Node> {
   Iterable<Node> nodes() => _graphNodes(_root);
 
   @override
-  Graph<T1, NewNode> map<T1, NewNode extends GraphNode<T1>>(
+  Graph<T1, NewNode/*!*/> map<T1, NewNode extends GraphNode<T1>>(
     NewNode Function(T) createNode,
   ) {
     final visited = <Node, NewNode>{};
     final newRootNode = _createOrGetMappedNode(_root, createNode, visited);
-    return RootGraph<T1, NewNode>(newRootNode);
+    return RootGraph<T1, NewNode/*!*/>(newRootNode);
   }
 }
 

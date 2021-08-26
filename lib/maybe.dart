@@ -72,7 +72,7 @@ extension MaybeApply<U, T> on Maybe<U Function(T)> {
 }
 
 /// Extensions on [Object] for seamless usage with [Maybe<T>].
-extension MaybeObjectWrapping<T> on T {
+extension MaybeObjectWrapping<T> on T/*?*/ {
   /// Wrap [this] into an [Maybe<T>] with [null] representing [None].
   Maybe<T /*!*/ > get maybe => Maybe.fromNullable<T /*?*/ >(this);
 
@@ -84,7 +84,7 @@ extension MaybeObjectWrapping<T> on T {
 }
 
 extension EitherToMaybe<T> on Either<Object, T> {
-  Maybe<T> toMaybe() {
+  Maybe<T>/*!*/ toMaybe() {
     return visit<Maybe<T>>(
       a: (Object _) => None<T>(),
       b: (r) => Just<T>(r),
@@ -241,7 +241,7 @@ abstract class Maybe<T> extends Monad<T> {
   T valueOrGet(T Function() /*!*/ get) => visit<T>(just: _identity, none: get);
 
   /// Apply the visitor callbacks for the respective type if they are present.
-  T1 visit<T1>({@required T1 Function(T) just, @required T1 Function() none});
+  T1/*!*/ visit<T1>({@required T1 Function(T)/*!*/ just, @required T1 Function() none});
 
   @override
   Maybe<B> lift<A, B>(Maybe<B Function(A)> fn, Maybe<A> a) =>
@@ -271,7 +271,7 @@ abstract class Maybe<T> extends Monad<T> {
 
   /// Convert this [Maybe] to an [List], with [None] being an empty list and
   /// Just being an list that contains just the value.
-  List<T> toList() => visit(
+  List<T>/*!*/ toList() => visit(
         just: (v) => <T>[v],
         none: () => <T>[],
       );
@@ -308,7 +308,7 @@ class Just<T> extends Maybe<T> {
   }
 
   @override
-  T1 visit<T1>({T1 Function(T p1) just, T1 Function() none}) =>
+  T1/*!*/ visit<T1>({T1 Function(T p1)/*!*/ just, T1 Function()/*!*/ none}) =>
       just?.call(_value);
 }
 
@@ -328,5 +328,5 @@ class None<T> extends Maybe<T> {
   bool operator ==(dynamic other) => other is None<T>;
 
   @override
-  T1 visit<T1>({T1 Function(T p1) just, T1 Function() none}) => none?.call();
+  T1/*!*/ visit<T1>({T1 Function(T p1)/*!*/ just, T1 Function()/*!*/ none}) => none?.call();
 }

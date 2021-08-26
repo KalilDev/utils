@@ -27,21 +27,21 @@ abstract class Monad<A> implements Applicative<A>, Monoid {
   /// The composition operation, which [fmap]s the value into an
   /// [Monad<Monad<B>>] value, and unwraps into an [Monad<B>], allowing for a
   /// pipeline of operations.
-  Monad<B> bind<B>(covariant Monad<B> Function(A) fn);
+  Monad<B>/*!*/ bind<B>(covariant Monad<B> Function(A) fn);
 
   // Functor
 
   /// Maps the value contained in this [Monad] from [A] to [B] with [fn] and
   /// wraps the result in [Monad<B>].
   @override
-  Monad<B> fmap<B>(B Function(A) fn);
+  Monad<B>/*!*/ fmap<B>(B Function(A) fn);
 
   // Applicative
 
   @override
   Monad<T> pure<T>(T value) => unit<T>(value);
   @override
-  Monad<B> lift<A1, B>(Monad<B Function(A1)> fn, Monad<A1> a);
+  Monad<B>/*!*/ lift<A1, B>(Monad<B Function(A1)> fn, Monad<A1> a);
 }
 
 T _identity<T>(T v) => v;
@@ -121,7 +121,7 @@ abstract class MonadState<S> {
 
   /// -- | Embed a simple state action into the monad.
   /// state :: (s -> (a, s)) -> m a
-  Monad<A> state<A>(Tuple<A, S> Function(S) fn) =>
+  Monad<A>/*!*/ state<A>(Tuple<A, S> Function(S) fn) =>
       get().bind((s) => fn(s).visit(
             (a, s) => put(s).unit(a),
           ));
@@ -135,7 +135,7 @@ abstract class MonadState<S> {
 abstract class Functor<A> {
   /// Maps the value contained in this [Functor] from the category [A] to the
   /// category [B] with [fn] and wraps the result inside an [Functor<B>].
-  Functor<B> fmap<B>(B Function(A) fn);
+  Functor<B>/*!*/ fmap<B>(B Function(A) fn);
 }
 
 /// An [Applicative] [Functor] is an intermediate structure between [Functor]s
@@ -155,22 +155,22 @@ abstract class Applicative<A> implements Functor<A> {
 
   /// Perform the operation [fn] with the value in [a] and wrap with
   /// [Applicative<B>] for pipelining.
-  Applicative<B> lift<A1, B>(
+  Applicative<B>/*!*/ lift<A1, B>(
     covariant Applicative<B Function(A1)> fn,
     covariant Applicative<A1> a,
   );
 
   @override
-  Applicative<B> fmap<B>(B Function(A) fn);
+  Applicative<B>/*!*/ fmap<B>(B Function(A) fn);
 }
 
 /// The [apply] operation for an [B Function(A)].
 extension ApplicativeFnApply<A, B> on B Function(A) {
   /// Equivalent to `f <$> a`.
-  Applicative<B> apply(Applicative<A> a) => a.fmap(this);
+  Applicative<B>/*!*/ apply(Applicative<A> a) => a.fmap(this);
 
   /// Equivalent to `f <$> a`.
-  Applicative<B> operator >>(Applicative<A> a) => apply(a);
+  Applicative<B>/*!*/ operator >>(Applicative<A> a) => apply(a);
 }
 
 /// The [apply] operation for an [Applicative<B Function(A)>].
@@ -178,10 +178,10 @@ extension ApplicativeFnApply<A, B> on B Function(A) {
 /// Should be shadowed by every [Applicative] type!
 extension ApplicativeApply<A, B> on Applicative<B Function(A)> {
   /// Equivalent to `f <*> a`
-  Applicative<B> apply(Applicative<A> a) => a.lift<A, B>(this, a);
+  Applicative<B>/*!*/ apply(Applicative<A> a) => a.lift<A, B>(this, a);
 
   /// Equivalent to `f <*> a`
-  Applicative<B> operator >>(Applicative<A> a) => apply(a);
+  Applicative<B>/*!*/ operator >>(Applicative<A> a) => apply(a);
 }
 
 /// An [BiFunctor] type is an type which can map values from two categories into
@@ -189,13 +189,13 @@ extension ApplicativeApply<A, B> on Applicative<B Function(A)> {
 abstract class BiFunctor<A, B> {
   /// Map the left [A] value into an [A1] with the [fn] mapper, while keeping
   /// the right value untouched.
-  BiFunctor<A1, B> first<A1>(A1 Function(A) fn);
+  BiFunctor<A1, B>/*!*/ first<A1>(A1 Function(A) fn);
 
   /// Map the right [B] value into an [B1] with the [fn] mapper, while keeping
   /// the left value untouched.
-  BiFunctor<A, B1> second<B1>(B1 Function(B) fn);
+  BiFunctor<A, B1>/*!*/ second<B1>(B1 Function(B) fn);
 
   /// Map the values [A] to [A1] and [B] to [B1] with the [a] and [b] mappers,
   /// respectively.
-  BiFunctor<A1, B1> bimap<A1, B1>({A1 Function(A) a, B1 Function(B) b});
+  BiFunctor<A1, B1>/*!*/ bimap<A1, B1>({A1 Function(A) a, B1 Function(B) b});
 }

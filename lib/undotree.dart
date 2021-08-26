@@ -238,8 +238,8 @@ class UndoHeader<E> {
   }
 
   /// The head of the current [UndoHeader] linked list.
-  UndoHeader<E> head() {
-    UndoHeader<E> head;
+  UndoHeader<E>/*!*/ head() {
+    UndoHeader<E>/*!*/ head;
     for (var next = this; next != null; next = next.next) {
       head = next;
     }
@@ -247,8 +247,8 @@ class UndoHeader<E> {
   }
 
   /// The tail of the current [UndoHeader] linked list.
-  UndoHeader<E> tail() {
-    UndoHeader<E> tail;
+  UndoHeader<E>/*!*/ tail() {
+    UndoHeader<E>/*!*/ tail;
     for (var prev = this; prev != null; prev = prev.prev) {
       tail = prev;
     }
@@ -285,8 +285,8 @@ class UndoHeader<E> {
   }
 
   /// The head of the current alt [UndoHeader] linked list.
-  UndoHeader<E> altHead() {
-    UndoHeader<E> head;
+  UndoHeader<E>/*!*/ altHead() {
+    UndoHeader<E>/*!*/ head;
     for (var next = this; next != null; next = next.nextAlt) {
       head = next;
     }
@@ -294,8 +294,8 @@ class UndoHeader<E> {
   }
 
   /// The tail of the current alt [UndoHeader] linked list.
-  UndoHeader<E> altTail() {
-    UndoHeader<E> tail;
+  UndoHeader<E>/*!*/ altTail() {
+    UndoHeader<E>/*!*/ tail;
     for (var prev = this; prev != null; prev = prev.prevAlt) {
       tail = prev;
     }
