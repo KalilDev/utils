@@ -145,7 +145,7 @@ class RootGraph<T, Node extends GraphNode<T>> extends Graph<T, Node> {
   ) {
     final visited = <Node, NewNode>{};
     final NewNode newRootNode =
-        _createOrGetMappedNode(_root!, createNode, visited);
+        _createOrGetMappedNode(_root, createNode, visited);
     return RootGraph<T1, NewNode>(newRootNode);
   }
 }

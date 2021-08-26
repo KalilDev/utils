@@ -41,9 +41,6 @@ abstract class Either<A, B> extends Monad<B> implements BiFunctor<A, B> {
   static Either<A, B> right<A, B>(B value) => Right(value);
 
   @override
-  Either<A?, T> identity<T>() => left<A?, T>(null);
-
-  @override
   Either<A, T> unit<T>(T value) => right<A, T>(value);
 
   @override

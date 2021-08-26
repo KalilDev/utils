@@ -79,7 +79,7 @@ extension MaybeObjectWrapping<T> on T {
   Maybe<T> get just => Just<T>(this);
 
   /// Maybe cast [this] as [T1], returning [None] in case of an invalid cast.
-  Maybe<T1> maybeAs<T1>() => (this is T1 ? Just<T1>(this as T1) : None<T1>());
+  Maybe<T1> maybeAs<T1>() => this is T1 ? Just<T1>(this as T1) : None<T1>();
 }
 
 extension EitherToMaybe<T> on Either<Object, T> {

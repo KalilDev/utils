@@ -15,13 +15,8 @@ class State<S, A> implements Monad<A>, MonadState<S> {
           ));
 
   @override
-  State<S, B> fmap<B>(B Function(A) fn) => unreachable()!;
+  State<S, B> fmap<B>(B Function(A) fn) => unreachable();
   /*State<S, B>((s) => runState(s).first(fn));*/
-
-  @override
-  State<S, T> identity<T>() {
-    throw UnimplementedError();
-  }
 
   @override
   State<S, B> lift<A1, B>(State<S, B Function(A1)> fn, State<S, A1> a) =>
@@ -37,6 +32,7 @@ class State<S, A> implements Monad<A>, MonadState<S> {
   State<S, S> get() => State((s) => Tuple(s, s));
 
   @override
+  // ignore: prefer_void_to_null
   State<S, Null> put(S s) => State<S, Null>((_) => Tuple(null, s));
 
   @override
@@ -61,12 +57,6 @@ class Reader<E, A> extends Monad<A> implements MonadReader<E> {
   @override
   Reader<E, B> fmap<B>(B Function(A) fn) {
     // TODO: implement fmap
-    throw UnimplementedError();
-  }
-
-  @override
-  Reader<E, T> identity<T>() {
-    // TODO: implement identity
     throw UnimplementedError();
   }
 

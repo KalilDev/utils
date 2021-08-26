@@ -54,7 +54,9 @@ class SinglyLinkedEventSourcedModel<
         super(initialState);
 
   SinglyLinkedEventSourcedModel._(
-      {required S initialState, required S state, required LinkedList<_EventListNode<E>> eventList})
+      {required S initialState,
+      required S state,
+      required LinkedList<_EventListNode<E>> eventList})
       : _snapshot = state,
         _eventList = eventList,
         super(initialState);

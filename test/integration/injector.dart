@@ -1,6 +1,6 @@
+import 'package:utils/graph.dart';
 import 'package:utils/injector.dart';
 import 'package:utils/src/injector.dart';
-import 'package:utils/graph.dart';
 
 class AnInjectedEndpoint implements IEndpoint {
   @override

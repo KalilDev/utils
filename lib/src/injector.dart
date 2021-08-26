@@ -1,7 +1,7 @@
+import 'package:meta/meta.dart';
+import 'package:utils/curry.dart';
 import 'package:utils/injector.dart';
 import 'package:utils/maybe.dart';
-import 'package:utils/curry.dart';
-import 'package:meta/meta.dart';
 
 import '../graph.dart';
 
@@ -236,7 +236,7 @@ mixin DetachedConsumer implements IInjectDependencies, IDebugAnScope {
     if (_ready) {
       return;
     }
-    if (this.scope == null) {
+    if (_scope == null) {
       throw StateError('The base scope must not be null');
     }
     final scope = _getOrCreateScopeFor(this, this.scope as InjectorScopeImpl);
@@ -343,9 +343,9 @@ class InjectorScopeImpl implements InjectorScope {
     }
     return _parent.visit(
         just: (parent) => parent!.getUntyped(t),
-        none: (() => throw StateError(
+        none: () => throw StateError(
               'The type $t is not injectable by this injector',
-            )) as Object Function());
+            ));
   }
 
   @override
@@ -555,7 +555,7 @@ InjectorScopeImpl _getOrCreateScopeFor(
         (b) => b
           ..addDebugLabel(maybeCreatesScope.runtimeType.toString())
           ..applyUpdates(maybeCreatesScope.createScope),
-        parentScope.just as Maybe<InjectorScope>);
+        parentScope.just);
     parentScope._children.add(newScope);
     return newScope;
   }

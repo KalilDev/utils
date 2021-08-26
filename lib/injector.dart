@@ -226,7 +226,7 @@ class Dependency {
       case ValueKind.proxyLeaf:
         return '{$s}';
       default:
-        return unreachable()!;
+        return unreachable();
     }
   }
 

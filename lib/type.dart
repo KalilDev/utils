@@ -87,6 +87,7 @@ abstract class MonadWriter<W extends Monoid> {
 
   /// -- | @'tell' w@ is an action that produces the output @w@.
   /// tell   :: w -> m ()
+  // ignore: prefer_void_to_null
   Monad<Null> tell(W w);
 
   /// -- | @'listen' m@ is an action that executes the action @m@ and adds
@@ -114,6 +115,7 @@ abstract class MonadState<S> {
 
   /// -- | Replace the state inside the monad.
   /// put :: s -> m ()
+  // ignore: prefer_void_to_null
   Monad<Null> put(S s);
 
   /// -- | Embed a simple state action into the monad.

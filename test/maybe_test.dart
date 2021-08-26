@@ -1,10 +1,10 @@
-import 'package:utils/utils.dart' hide type;
 import 'package:test/test.dart';
+import 'package:utils/utils.dart';
 
 extension _MaybeTest<T> on Maybe<T> {
   T get value => visit(
         just: (v) => v,
-        none: (() => fail('should be Just<$T>')) as T Function(),
+        none: () => fail('should be Just<$T>'),
       );
 }
 
@@ -42,13 +42,13 @@ void main() {
     group('MaybeListTraverse', () {
       final emptyList = <int>[];
       final list = <int>[0, 1, 2, 1];
-      test('traverse', () {
+      test('mapMaybe/traverse', () {
         expect(
-          emptyList.traverse(greaterThanOne),
+          emptyList.mapMaybe(greaterThanOne),
           isA<None<List<int>>>(),
         );
         expect(
-          list.traverse(greaterThanOne).value,
+          list.mapMaybe(greaterThanOne).value,
           [2],
         );
       });
@@ -58,13 +58,13 @@ void main() {
           i > 1 ? Just<int>(i) : const None<int>();
       const emptyIter = Iterable<int>.empty();
       final iter = <int>[0, 1, 2, 1].map((e) => e);
-      test('traverse', () {
+      test('mapMaybe', () {
         expect(
-          emptyIter.traverse(greaterThanOne),
+          emptyIter.mapMaybe(greaterThanOne),
           isA<None<List<int>>>(),
         );
         expect(
-          iter.traverse(greaterThanOne).value,
+          iter.mapMaybe(greaterThanOne).value,
           [2],
         );
       });
@@ -168,13 +168,7 @@ void main() {
       expect(Maybe.nullableFromAsyncOperation<int>(() async => throw ''),
           throwsA(anything));
     });
-    test('map', () {
-      const noneInt = None<int>();
-      const justInt = Just<int>(1);
-      expect(noneInt.map((v) => 2.0 * v), isA<None<double>>());
-      expect(justInt.map((v) => 2.0 * v).value, 2.0);
-    });
-    test('fmap', () {
+    test('map/fmap', () {
       const noneInt = None<int>();
       const justInt = Just<int>(1);
       expect(noneInt.fmap((v) => 2.0 * v), isA<None<double>>());
@@ -190,22 +184,22 @@ void main() {
       expect(justOne.bind(maybeDouble).value, 2.0);
       expect(justTwo.bind(maybeDouble), isA<None<double>>());
     });
-    test('filter', () {
+    test('where/filter', () {
       const noneInt = None<int>();
       const justOne = Just<int>(1);
       const justTwo = Just<int>(2);
       bool notTwo(int i) => i != 2;
-      expect(noneInt.filter(notTwo), isA<None<int>>());
-      expect(justOne.filter(notTwo).value, 1);
-      expect(justTwo.filter(notTwo), isA<None<int>>());
+      expect(noneInt.where(notTwo), isA<None<int>>());
+      expect(justOne.where(notTwo).value, 1);
+      expect(justTwo.where(notTwo), isA<None<int>>());
     });
-    test('filterNonNullable', () {
+    test('whereNotNull/filterrNonNullable', () {
       const noneInt = None<int>();
       const justOne = Just<int>(1);
       const justNull = Just<int?>(null);
-      expect(noneInt.filterNonNullable(), isA<None<int>>());
-      expect(justOne.filterNonNullable(), isA<Just<int>>());
-      expect(justNull.filterNonNullable(), isA<None<int>>());
+      expect(noneInt.whereNotNull(), isA<None<int>>());
+      expect(justOne.whereNotNull(), isA<Just<int>>());
+      expect(justNull.whereNotNull(), isA<None<int>>());
     });
     test('fillWhenNone', () {
       const noneInt = None<int>();
@@ -213,11 +207,11 @@ void main() {
       expect(noneInt.fillWhenNone(1).value, 1);
       expect(justTwo.fillWhenNone(1).value, 2);
     });
-    test('valueOrElse', () {
+    test('valueOr/valueOrElse', () {
       const noneInt = None<int>();
       const justOne = Just<int>(1);
-      expect(noneInt.valueOrElse(2), 2);
-      expect(justOne.valueOrElse(2), 1);
+      expect(noneInt.valueOr(2), 2);
+      expect(justOne.valueOr(2), 1);
     });
     test('valueOr', () {
       const noneInt = None<int>();
@@ -236,15 +230,13 @@ void main() {
       const justOne = Just<int>(1);
       expect(
         noneInt.visit<double>(
-            just: ((dynamic _) => fail('Not just')) as double Function(int),
-            none: () => 2.0),
+            just: (dynamic _) => fail('Not just'), none: () => 2.0),
         2.0,
       );
 
       expect(
         justOne.visit<double>(
-            none: (() => fail('Not none')) as double Function(),
-            just: (i) => 3.0 * i),
+            none: () => fail('Not none'), just: (i) => 3.0 * i),
         3.0,
       );
     });

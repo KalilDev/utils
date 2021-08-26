@@ -106,11 +106,11 @@ class DoublyLinkedEventSourcedModel<
   bool canUndo() {
     // we are at the beggining, therefore there aren't any events, so we can't
     // undo
-    if (_eventCursor!.element == null) {
+    if (_eventCursor?.element == null) {
       return false;
     }
 
-    final previous = _eventCursor!.previousEntry()!;
+    final previous = _eventCursor!.previousEntry();
     assert(previous != null);
     return true;
   }
@@ -184,7 +184,7 @@ class DoublyLinkedEventSourcedModel<
   }
 
   @override
-  S get snapshot => _snapshot ?? initialState;
+  S get snapshot => _snapshot;
   S _snapshot;
 
   @override

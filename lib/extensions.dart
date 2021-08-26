@@ -2,8 +2,6 @@ library utils.extensions;
 
 import 'dart:async';
 
-import 'package:meta/meta.dart';
-
 import 'curry.dart';
 import 'type.dart';
 

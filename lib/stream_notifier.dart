@@ -15,6 +15,7 @@ class StreamNotifier<T> {
   final Set<void Function()> _doneListeners = <void Function()>{};
   final Set<Function> _errorListeners = <Function>{};
   final Stream<T> _stream;
+  // ignore: cancel_subscriptions
   StreamSubscription<T>? _subs;
 
   void _ensureInitialized() {
@@ -209,7 +210,7 @@ class EagerNotifierSubscription<T> extends _NotifierSubscriptionBase<Maybe<T>> {
 abstract class _NotifierSubscriptionBase<T> implements StreamSubscription<T> {
   Maybe<T> _queuedEvent = const None();
   bool _isPaused = false;
-  void Function(T)?/*?*/ _handler;
+  void Function(T)? /*?*/ _handler;
   void Function()? _doneHandler;
   Function? _errorHandler;
 
@@ -240,8 +241,9 @@ abstract class _NotifierSubscriptionBase<T> implements StreamSubscription<T> {
   }
 
   void _onStreamError(Object error, [StackTrace? s]) {
-    if (_errorHandler is void Function(Object, [StackTrace?])) {
-      return _errorHandler?.call(error, s);
+    final errorHandler = _errorHandler;
+    if (errorHandler is void Function(Object, [StackTrace?])) {
+      return errorHandler(error, s);
     }
     final fn = _errorHandler as void Function(Object)?;
     return fn?.call(error);
