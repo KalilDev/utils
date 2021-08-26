@@ -41,16 +41,15 @@ abstract class Monad<A> implements Applicative<A>, Monoid {
   @override
   Monad<T> pure<T>(T value) => unit<T>(value);
   @override
-  Monad<B> lift<A, B>(Monad<B Function(A)> fn, Monad<A> a);
+  Monad<B> lift<A1, B>(Monad<B Function(A1)> fn, Monad<A1> a);
 }
 
 T _identity<T>(T v) => v;
 
 class Tuple<A, B> implements BiFunctor<A, B> {
+  const Tuple(this.left, this.right);
   final A left;
   final B right;
-
-  const Tuple(this.left, this.right);
 
   @override
   Tuple<A1, B1> bimap<A1, B1>({A1 Function(A) a, B1 Function(B) b}) =>
@@ -91,7 +90,7 @@ abstract class MonadWriter<W extends Monoid> {
 
   /// -- | @'tell' w@ is an action that produces the output @w@.
   /// tell   :: w -> m ()
-  Monad<Null> tell(W);
+  Monad<Null> tell(W w);
 
   /// -- | @'listen' m@ is an action that executes the action @m@ and adds
   /// -- its output to the value of the computation.
@@ -156,9 +155,9 @@ abstract class Applicative<A> implements Functor<A> {
 
   /// Perform the operation [fn] with the value in [a] and wrap with
   /// [Applicative<B>] for pipelining.
-  Applicative<B> lift<A, B>(
-    covariant Applicative<B Function(A)> fn,
-    covariant Applicative<A> a,
+  Applicative<B> lift<A1, B>(
+    covariant Applicative<B Function(A1)> fn,
+    covariant Applicative<A1> a,
   );
 
   @override

@@ -183,8 +183,8 @@ mixin DetachedConsumer implements IInjectDependencies, IDebugAnScope {
   void _check(Type t) {
     _initScope();
     if (!dependencies.contains(t)) {
-      throw StateError(
-          'Every dependency must be added to the dependencies, but $t was not.');
+      throw StateError('Every dependency must be added to '
+          'the dependencies in order to be used, but $t was not.');
     }
   }
 
@@ -197,17 +197,22 @@ mixin DetachedConsumer implements IInjectDependencies, IDebugAnScope {
   /// This is not meant to be used in production, but instead on the
   /// Debug Console evaluator.
   void dumpScopeTree() =>
+      // ignore: avoid_print
       print(treeToString<ScopeTreeNode>(scopeTree(), (n) => n.description));
 
   /// Build the Dependency tree from [this].
-  DependencyTreeNode dependencyTree() => DependencyTreeNode(this);
+  DependencyTreeNode toDependencyTree() => DependencyTreeNode(this);
+  @Deprecated('Use toDependencyTree')
+  DependencyTreeNode dependencyTree() => toDependencyTree();
 
-  /// Dump the [String] representation of the [dependencyTree] to the console
+  /// Dump the [String] representation of the [toDependencyTree] to the console
   /// output.
   ///
   /// This is not meant to be used in production, but instead on the
   /// Debug Console evaluator.
-  void dumpDependencyTree() => print(treeToString(dependencyTree()));
+  void dumpDependencyTree() =>
+      // ignore: avoid_print
+      print(treeToString(toDependencyTree()));
 
   @override
   T get<T>() {
@@ -268,37 +273,22 @@ class ScopeTreeNode extends TreeNode<InjectorScope> {
 
 /// The actual implementation for the [Injector] type
 class InjectorImpl implements Injector {
-  @override
-  final InjectorScope root;
-
-  const InjectorImpl._(this.root);
   factory InjectorImpl(void Function(InjectorScopeBuilderImpl) updates) =>
       InjectorImpl._(InjectorScopeImpl(
         (b) => b
           ..addDebugLabel('root')
           ..applyUpdates(updates),
-        None(),
+        const None(),
       ));
   factory InjectorImpl.debug(InjectorScope root) => InjectorImpl._(root);
+  const InjectorImpl._(this.root);
+
+  @override
+  final InjectorScope root;
 }
 
 /// The actual implementation for the [InjectorScope] type
 class InjectorScopeImpl implements InjectorScope {
-  final Map<Type, _Injectable> _injectableTypes;
-  final Map<Type, dynamic> _injectedValues = {};
-  final Set<InjectorScopeImpl> _children = {};
-  final String _debugLabel;
-
-  /// Not final so that [IDebugAnScope] can override the parent of an child
-  /// node.
-  Maybe<InjectorScopeImpl> _parent;
-
-  InjectorScopeImpl._(
-    this._injectableTypes,
-    this._parent,
-    this._debugLabel,
-  );
-
   /// Create an [InjectorScopeImpl] from the changes on a builder, and a parent.
   ///
   /// # It should NOT be used outside of the internal implementation!
@@ -322,6 +312,21 @@ class InjectorScopeImpl implements InjectorScope {
         .whereType<IScopeProxy>()
         .forEach(_propagateScopeToProxy.curry(this));
   }
+
+  InjectorScopeImpl._(
+    this._injectableTypes,
+    this._parent,
+    this._debugLabel,
+  );
+
+  final Map<Type, _Injectable> _injectableTypes;
+  final Map<Type, dynamic> _injectedValues = {};
+  final Set<InjectorScopeImpl> _children = {};
+  final String _debugLabel;
+
+  /// Not final so that [IDebugAnScope] can override the parent of an child
+  /// node.
+  Maybe<InjectorScopeImpl> _parent;
 
   @override
   T get<T>() => getUntyped(T) as T;
@@ -405,18 +410,16 @@ abstract class _Injectable<T> {
 }
 
 class _ValueInjectable<T> extends _Injectable<T> {
-  final T _value;
-
   const _ValueInjectable(this._value);
+  final T _value;
 
   @override
   T getOrCreate(InjectorScopeImpl scope) => setScopeAndValidate(scope, _value);
 }
 
 class _FactoryInjectable<T> extends _Injectable<T> {
-  final T Function() _factory;
-
   const _FactoryInjectable(this._factory);
+  final T Function() _factory;
 
   @override
   T getOrCreate(InjectorScopeImpl scope) {
@@ -431,9 +434,8 @@ class _FactoryInjectable<T> extends _Injectable<T> {
 }
 
 class _BoundFactoryInjectable<T> extends _Injectable<T> {
-  final T Function(T Function(IScopeProxy)) _boundFactory;
-
   const _BoundFactoryInjectable(this._boundFactory);
+  final T Function(T Function(IScopeProxy)) _boundFactory;
 
   T _bind(InjectorScopeImpl scope, IScopeProxy v) =>
       setScopeAndValidate(scope, v as T);
@@ -460,9 +462,8 @@ class _BoundFactoryInjectable<T> extends _Injectable<T> {
 }
 
 class _InjectedFactoryInjectable<T> extends _Injectable<T> {
-  final T Function(InjectorScope) _injectedFactory;
-
   const _InjectedFactoryInjectable(this._injectedFactory);
+  final T Function(InjectorScope) _injectedFactory;
 
   @override
   T getOrCreate(InjectorScopeImpl scope) {
@@ -474,8 +475,8 @@ class _InjectedFactoryInjectable<T> extends _Injectable<T> {
     }
 
     if (v is IScopeProxy) {
-      throw StateError(
-          'injectedFactory should not be used for proxies! Use factory or boundFactory');
+      throw StateError('injectedFactory should not be used '
+          'for proxies! Use factory or boundFactory');
     }
 
     /// this will only validate
@@ -590,12 +591,16 @@ InjectorScopeImpl _overrideScopeForDebug(
             ..remove(oldScope)
             ..add(newScope);
         },
+        none: unreachable,
       );
       newScope._parent = oldScope._parent;
       return newScope;
     case ScopeOverridingMode.detach:
       // Remove the oldScope from the parent
-      oldScope._parent.visit(just: (p) => p._children.remove(oldScope));
+      oldScope._parent.visit(
+        just: (p) => p._children.remove(oldScope),
+        none: unreachable,
+      );
       return newScope;
     default:
       throw StateError('Unknown mode: $mode');

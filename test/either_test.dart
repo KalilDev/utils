@@ -43,8 +43,8 @@ void main() {
           'Hello');
     });
 
-    final lv = 1;
-    final rv = 'Hello';
+    const lv = 1;
+    const rv = 'Hello';
     final left = Either.left<int, String>(1);
     final right = Either.right<int, String>('Hello');
     group('BiFunctor', () {
@@ -121,8 +121,8 @@ void main() {
     });
   });
   group('EitherIterableUtils', () {
-    final lv = 1;
-    final rv = 'Hello';
+    const lv = 1;
+    const rv = 'Hello';
     final left = Either.left<int, String>(1);
     final right = Either.right<int, String>('Hello');
     final iter = Iterable.generate(4, (i) => i.isEven ? left : right);

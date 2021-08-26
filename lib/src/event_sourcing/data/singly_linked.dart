@@ -5,9 +5,8 @@ import '../converter_function.dart';
 import '../event_sourcing.dart';
 
 class _EventListNode<E> extends LinkedListEntry<_EventListNode<E>> {
-  final E entry;
-
   _EventListNode(this.entry);
+  final E entry;
 }
 
 /// An [Codec] which can [encode] and [decode] an
@@ -49,7 +48,10 @@ class SinglyLinkedEventSourcedModel<
     S extends EventSourcedSnapshot<S, B, E>,
     B extends EventSourcedSnapshotBuilder<S, B, E>,
     E extends EventSourcedEvent<S, B, E>> extends EventSourcedModel<S, B, E> {
-  final LinkedList<_EventListNode<E>> _eventList;
+  /// Create an [SinglyLinkedEventSourcedModel]
+  SinglyLinkedEventSourcedModel(S initialState)
+      : _eventList = LinkedList<_EventListNode<E>>(),
+        super(initialState);
 
   SinglyLinkedEventSourcedModel._(
       {S initialState, S state, LinkedList<_EventListNode<E>> eventList})
@@ -57,10 +59,7 @@ class SinglyLinkedEventSourcedModel<
         _eventList = eventList,
         super(initialState);
 
-  /// Create an [SinglyLinkedEventSourcedModel]
-  SinglyLinkedEventSourcedModel(S initialState)
-      : _eventList = LinkedList<_EventListNode<E>>(),
-        super(initialState);
+  final LinkedList<_EventListNode<E>> _eventList;
 
   @override
   S add(E event) {

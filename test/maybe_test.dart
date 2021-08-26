@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:utils/utils.dart' hide type;
 import 'package:test/test.dart';
 
@@ -12,7 +10,8 @@ extension _MaybeTest<T> on Maybe<T> {
 
 void main() {
   group('ext', () {
-    Maybe<int> greaterThanOne(int i) => i > 1 ? Just<int>(i) : None<int>();
+    Maybe<int> greaterThanOne(int i) =>
+        i > 1 ? Just<int>(i) : const None<int>();
     group('MaybeObjectWrapping', () {
       test('maybe', () {
         // ignore: unnecessary_cast
@@ -31,8 +30,8 @@ void main() {
     });
     group('MaybeIterableCatamorph', () {
       test('cataMaybes', () {
-        final none = None<int>();
-        final justOne = Just<int>(1);
+        const none = None<int>();
+        const justOne = Just<int>(1);
         expect([none].cataMaybes(), isEmpty);
         expect([none, none].cataMaybes(), isEmpty);
         expect([justOne].cataMaybes(), Iterable.castFrom([1]));
@@ -42,7 +41,7 @@ void main() {
     });
     group('MaybeListTraverse', () {
       Maybe<int> indexGreaterThanOne(int v, [int i]) =>
-          i > 1 ? Just<int>(v) : None<int>();
+          i > 1 ? Just<int>(v) : const None<int>();
       final emptyList = <int>[];
       final list = <int>[0, 1, 2, 1];
       test('traverse', () {
@@ -65,8 +64,9 @@ void main() {
       });
     });
     group('MaybeIterableTraverse', () {
-      Maybe<int> greaterThanOne(int i) => i > 1 ? Just<int>(i) : None<int>();
-      final emptyIter = Iterable<int>.empty();
+      Maybe<int> greaterThanOne(int i) =>
+          i > 1 ? Just<int>(i) : const None<int>();
+      const emptyIter = Iterable<int>.empty();
       final iter = <int>[0, 1, 2, 1].map((e) => e);
       test('traverse', () {
         expect(
@@ -82,9 +82,9 @@ void main() {
   });
   group('MaybeApply', () {
     String Function(String) concat(String a) => (String b) => a + b;
-    final noneString = None<String>();
-    final justHello = Just<String>('Hello');
-    final justWorld = Just<String>(' World');
+    const noneString = None<String>();
+    const justHello = Just<String>('Hello');
+    const justWorld = Just<String>(' World');
     test('apply', () {
       expect(
         concat.just.apply(noneString).apply(noneString),
@@ -136,14 +136,14 @@ void main() {
       expect(Maybe.none<double>(), isA<None<double>>());
     });
     test('unit', () {
-      final none = None<int>();
-      final one = Just<int>(1);
+      const none = None<int>();
+      const one = Just<int>(1);
       expect(none.unit<double>(2).value, 2.0);
       expect(one.unit<double>(2).value, 2.0);
     });
     test('identity', () {
-      final none = None<int>();
-      final one = Just<int>(1);
+      const none = None<int>();
+      const one = Just<int>(1);
       expect(none.identity<double>(), isA<None<double>>());
       expect(one.identity<double>(), isA<None<double>>());
     });
@@ -185,71 +185,71 @@ void main() {
           throwsA(anything));
     });
     test('map', () {
-      final noneInt = None<int>();
-      final justInt = Just<int>(1);
+      const noneInt = None<int>();
+      const justInt = Just<int>(1);
       expect(noneInt.map((v) => 2.0 * v), isA<None<double>>());
       expect(justInt.map((v) => 2.0 * v).value, 2.0);
     });
     test('fmap', () {
-      final noneInt = None<int>();
-      final justInt = Just<int>(1);
+      const noneInt = None<int>();
+      const justInt = Just<int>(1);
       expect(noneInt.fmap((v) => 2.0 * v), isA<None<double>>());
       expect(justInt.fmap((v) => 2.0 * v).value, 2.0);
     });
     test('bind', () {
-      final noneInt = None<int>();
-      final justOne = Just<int>(1);
-      final justTwo = Just<int>(2);
+      const noneInt = None<int>();
+      const justOne = Just<int>(1);
+      const justTwo = Just<int>(2);
       Maybe<double> maybeDouble(int i) =>
-          i == 2 ? None<double>() : Just<double>(2.0 * i);
+          i == 2 ? const None<double>() : Just<double>(2.0 * i);
       expect(noneInt.bind(maybeDouble), isA<None<double>>());
       expect(justOne.bind(maybeDouble).value, 2.0);
       expect(justTwo.bind(maybeDouble), isA<None<double>>());
     });
     test('filter', () {
-      final noneInt = None<int>();
-      final justOne = Just<int>(1);
-      final justTwo = Just<int>(2);
+      const noneInt = None<int>();
+      const justOne = Just<int>(1);
+      const justTwo = Just<int>(2);
       bool notTwo(int i) => i != 2;
       expect(noneInt.filter(notTwo), isA<None<int>>());
       expect(justOne.filter(notTwo).value, 1);
       expect(justTwo.filter(notTwo), isA<None<int>>());
     });
     test('filterNonNullable', () {
-      final noneInt = None<int>();
-      final justOne = Just<int>(1);
-      final justNull = Just<int>(null);
+      const noneInt = None<int>();
+      const justOne = Just<int>(1);
+      const justNull = Just<int>(null);
       expect(noneInt.filterNonNullable(), isA<None<int>>());
       expect(justOne.filterNonNullable(), isA<Just<int>>());
       expect(justNull.filterNonNullable(), isA<None<int>>());
     });
     test('fillWhenNone', () {
-      final noneInt = None<int>();
-      final justTwo = Just<int>(2);
+      const noneInt = None<int>();
+      const justTwo = Just<int>(2);
       expect(noneInt.fillWhenNone(1).value, 1);
       expect(justTwo.fillWhenNone(1).value, 2);
     });
     test('valueOrElse', () {
-      final noneInt = None<int>();
-      final justOne = Just<int>(1);
+      const noneInt = None<int>();
+      const justOne = Just<int>(1);
       expect(noneInt.valueOrElse(2), 2);
       expect(justOne.valueOrElse(2), 1);
     });
     test('valueOr', () {
-      final noneInt = None<int>();
-      final justOne = Just<int>(1);
+      const noneInt = None<int>();
+      const justOne = Just<int>(1);
       expect(noneInt.valueOr(2), 2);
       expect(justOne.valueOr(2), 1);
     });
     test('valueOrGet', () {
-      final noneInt = None<int>();
-      final justOne = Just<int>(1);
+      const noneInt = None<int>();
+      const justOne = Just<int>(1);
       expect(noneInt.valueOrGet(() => 2), 2);
       expect(justOne.valueOrGet(() => 2), 1);
     });
     test('visit', () {
-      final noneInt = None<int>();
-      final justOne = Just<int>(1);
+      const noneInt = None<int>();
+      const justOne = Just<int>(1);
       expect(
         noneInt.visit<double>(just: (_) => fail('Not just'), none: () => 2.0),
         2.0,
@@ -262,20 +262,21 @@ void main() {
       );
     });
     test('lift', () {
+      // ignore: unnecessary_parenthesis
       final justFn = ((int i) => 2.0).just;
-      final noneInt = None<int>();
-      final justOne = Just<int>(1);
+      const noneInt = None<int>();
+      const justOne = Just<int>(1);
       expect(noneInt.lift(justFn, noneInt), isA<None<double>>());
       expect(justOne.lift(justFn, noneInt), isA<None<double>>());
       expect(noneInt.lift(justFn, justOne).value, 2.0);
       expect(justOne.lift(justFn, justOne).value, 2.0);
     });
     test('==', () {
-      final noneInt = None<int>();
-      final noneDouble = None<double>();
-      final justOne = Just<int>(1);
-      final otherJustOne = Just<int>(1);
-      final justString = Just<String>('');
+      const noneInt = None<int>();
+      const noneDouble = None<double>();
+      const justOne = Just<int>(1);
+      const otherJustOne = Just<int>(1);
+      const justString = Just<String>('');
       expect(noneInt, isNot(equals(noneDouble)));
       expect(noneInt, isNot(equals(justOne)));
       expect(noneDouble, isNot(equals(justOne)));

@@ -1,7 +1,9 @@
-import 'maybe.dart';
-import 'graph.dart';
 import 'dart:convert';
+
 import 'package:meta/meta.dart';
+
+import 'graph.dart';
+import 'maybe.dart';
 
 part 'src/undotree_codec.dart';
 
@@ -20,11 +22,12 @@ class UndoTreeRootNode<E> extends UndoTreeNode<E> {
   final Set<UndoTreeNode<E>> edges = {};
 
   @override
-  final Maybe<E> value = None();
+  final Maybe<E> value = const None();
 }
 
 // Contains value from [head]. Walks across every alt value from [head.next].
 class UndoTreeValueNode<E> extends UndoTreeNode<E> {
+  // ignore: prefer_initializing_formals
   UndoTreeValueNode(UndoHeader<E> curr) : header = curr {
     if (curr.next == null) {
       return;
@@ -122,8 +125,8 @@ class UndoTree<E> {
     return current.entry;
   }
 
-  /// Whether or not an [prevAlt] can be performed. This is the case when the tree
-  /// is initialized and there is an [prevAlt] element.
+  /// Whether or not an [prevAlt] can be performed. This is the case when the
+  /// tree is initialized and there is an [prevAlt] element.
   bool canPrevAlt() => current != null && current.prevAlt != null;
 
   /// Changes [current] to be [prevAlt] if possible, returning the new [current]
@@ -137,8 +140,8 @@ class UndoTree<E> {
     return current.entry;
   }
 
-  /// Whether or not an [nextAlt] can be performed. This is the case when the tree
-  /// is initialized and there is an [nextAlt] element.
+  /// Whether or not an [nextAlt] can be performed. This is the case when the
+  /// tree is initialized and there is an [nextAlt] element.
   bool canNextAlt() => current != null && current.nextAlt != null;
 
   /// Changes [current] to be [nextAlt] if possible, returning the new [current]
@@ -173,7 +176,8 @@ class UndoHeader<E> {
   /// The [index] this [UndoHeader] occupies in the [UndoTree]
   final int index;
 
-  /// The previous [UndoHeader]. If we are the tail, or not linked yet, it is null.
+  /// The previous [UndoHeader]. If we are the tail, or not linked yet, it is
+  /// null.
   UndoHeader<E> prev;
 
   /// The next [UndoHeader]. If we are the head, or not linked yet, it is null.

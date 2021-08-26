@@ -33,6 +33,7 @@ class EventBusImpl implements EventBus {
       // TODO: Error event
       // _unhandledController.add(event);
     } else {
+      // ignore: avoid_function_literals_in_foreach_calls
       listeners.forEach((l) => l.addError(error));
     }
   }
@@ -47,6 +48,7 @@ class EventBusImpl implements EventBus {
     if (listeners.isEmpty) {
       _unhandledController.add(event);
     } else {
+      // ignore: avoid_function_literals_in_foreach_calls
       listeners.forEach((l) => l.addEvent(event));
     }
     _maybeCache<T>(event);
@@ -100,7 +102,7 @@ class EventBusImpl implements EventBus {
   Stream<T> nextEvents<T>() {
     final l = _RegularListener<T>();
     _listeners.add(l);
-    l..onCancel = () => _listeners.remove(l);
+    l.onCancel = () => _listeners.remove(l);
     return l.stream;
   }
 
@@ -109,7 +111,7 @@ class EventBusImpl implements EventBus {
       nextEventsOrErrors<E, Event extends IMayThrowAn<E>>() {
     final l = _EitherListener<E, Event>();
     _listeners.add(l);
-    l..onCancel = () => _listeners.remove(l);
+    l.onCancel = () => _listeners.remove(l);
     return l.stream;
   }
 
@@ -133,15 +135,16 @@ class EventBusImpl implements EventBus {
     await _eventsController.close();
     await _unhandledController.close();
     for (final l in _listeners) {
-      await l.handleClose();
+      l.handleClose();
     }
   }
 }
 
 abstract class _Listener {
   bool didAdd = false;
-
+  FutureOr<void> Function() get onListen;
   set onListen(FutureOr<void> Function() onListen);
+  FutureOr<void> Function() get onCancel;
   set onCancel(FutureOr<void> Function() onCancel);
 
   bool canAdd(Type eventType);
@@ -158,8 +161,13 @@ class _EitherListener<E, Event extends IMayThrowAn<E>> extends _Listener {
       StreamController<Either<E, Event>>();
 
   @override
+  FutureOr<void> Function() get onListen => _controller.onListen;
+  @override
   set onListen(FutureOr<void> Function() onListen) =>
       _controller.onListen = onListen;
+
+  @override
+  FutureOr<void> Function() get onCancel => _controller.onCancel;
   @override
   set onCancel(FutureOr<void> Function() onCancel) =>
       _controller.onCancel = onCancel;
@@ -195,12 +203,17 @@ class _EitherListener<E, Event extends IMayThrowAn<E>> extends _Listener {
 
 class _RegularListener<T> extends _Listener {
   final StreamController<T> _controller = StreamController<T>();
+
   @override
-  bool didAdd = false;
+  FutureOr<void> Function() get onListen => _controller.onListen;
 
   @override
   set onListen(FutureOr<void> Function() onListen) =>
       _controller.onListen = onListen;
+
+  @override
+  FutureOr<void> Function() get onCancel => _controller.onCancel;
+
   @override
   set onCancel(FutureOr<void> Function() onCancel) =>
       _controller.onCancel = onCancel;

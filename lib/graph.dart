@@ -99,9 +99,8 @@ NewGraph _createOrGetMappedNode<T, NewGraph extends GraphNode>(
 }
 
 class NodesGraph<T, Node extends GraphNode<T>> extends Graph<T, Node> {
-  final List<Node> _nodes;
-
   NodesGraph(this._nodes);
+  final List<Node> _nodes;
 
   @override
   Iterable<Node> nodes() => _nodes;
@@ -120,9 +119,8 @@ class NodesGraph<T, Node extends GraphNode<T>> extends Graph<T, Node> {
 }
 
 class RootGraph<T, Node extends GraphNode<T>> extends Graph<T, Node> {
-  final Node _root;
-
   RootGraph(this._root);
+  final Node _root;
 
   Iterable<Node> _graphNodes(
     Node root, {
@@ -164,6 +162,7 @@ enum TreeToGraphLinkType {
   /// linking to the parent
   interlinked
 }
+T nothing<T>([Object o]) => null;
 
 /// Convert an tree, which may have more than one [TreeNode] representing the
 /// same value into an [Graph], which may be interlinked or not.
@@ -181,20 +180,22 @@ Graph<T, Node> treeToGraph<T, Node extends GraphNode<T>>(
           parentVal,
           () => createNode(parentVal),
         ));
-    parNode.visit(just: (parent) {
-      switch (linkType) {
-        case TreeToGraphLinkType.direct:
-          parent.addEdge(currNode);
-          break;
-        case TreeToGraphLinkType.reverse:
-          currNode.addEdge(parent);
-          break;
-        case TreeToGraphLinkType.interlinked:
-          parent.addEdge(currNode);
-          currNode.addEdge(parent);
-          break;
-      }
-    });
+    parNode.visit<void>(
+        just: (parent) {
+          switch (linkType) {
+            case TreeToGraphLinkType.direct:
+              parent.addEdge(currNode);
+              break;
+            case TreeToGraphLinkType.reverse:
+              currNode.addEdge(parent);
+              break;
+            case TreeToGraphLinkType.interlinked:
+              parent.addEdge(currNode);
+              currNode.addEdge(parent);
+              break;
+          }
+        },
+        none: nothing);
   }).iterator;
 
   while (it.moveNext()) {}
@@ -207,14 +208,14 @@ Graph<T, Node> treeToGraph<T, Node extends GraphNode<T>>(
 
 /// An edge from 2 [GraphNode]s in a graph.
 class GraphEdge<Node extends GraphNode> {
+  /// Create an [GraphEdge].
+  const GraphEdge(this.from, this.to);
+
   /// The [Node] this edge originates from.
   final Node from;
 
   /// The [Node] this edge links to.
   final Node to;
-
-  /// Create an [GraphEdge].
-  const GraphEdge(this.from, this.to);
 
   @override
   int get hashCode {
@@ -225,14 +226,14 @@ class GraphEdge<Node extends GraphNode> {
   }
 
   @override
-  bool operator ==(other) {
+  bool operator ==(dynamic other) {
     if (identical(this, other)) {
       return true;
     }
-    if (other is! GraphEdge<Node>) {
-      return false;
+    if (other is GraphEdge<Node>) {
+      return from == other.from && to == other.to;
     }
-    return from == other.from && to == other.to;
+    return false;
   }
 }
 
@@ -262,8 +263,8 @@ String treeToString<Node extends TreeNode>(
   String Function(Node) describeNode,
 ]) {
   ArgumentError.checkNotNull(root);
-  final buff = StringBuffer();
-  buff..writeln(describeNode?.call(root) ?? root.value.toString());
+  final buff = StringBuffer()
+    ..writeln(describeNode?.call(root) ?? root.value.toString());
 
   final children = root.edges.toList();
   for (var i = 0; i < children.length; i++) {

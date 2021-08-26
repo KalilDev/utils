@@ -37,7 +37,7 @@ void main() {
     });
     group('evaluatable', () {
       @isTestGroup
-      _testEvaluatable<A, B>(
+      void _testEvaluatable<A, B>(
         dynamic Function<A, B>(
           B Function(A), {
           A value,
@@ -158,7 +158,7 @@ void main() {
             bool Function(A) matches,
           }) =>
               doWhen<A>(
-                fn as void Function(A),
+                fn,
                 value: value,
                 values: values,
                 matches: matches,
@@ -170,23 +170,23 @@ void main() {
     });
     group('match', () {
       test('is stateless', () {
-        final matched = match(1.0);
+        const matched = match(1.0);
         expect(matched.eval([any]), null);
         expect(matched.eval([any]), null);
       });
       group('eval', () {
         test('returns null on not found', () {
-          expect(match(1).eval([]), null);
+          expect(const match(1).eval([]), null);
         });
         test('throws on invalid return type', () {
           expect(
-            () => match(1).eval<double>([any.then((_) => 1)]),
+            () => const match(1).eval<double>([any.then((_) => 1)]),
             throwsA(anything),
           );
         });
         test('evaluates sequentially', () {
           expect(
-            match(1).eval([
+            const match(1).eval([
               any.then<int>((_) => 2),
               type<int>().then<int>((_) => fail('should be unreachable'))
             ]),
@@ -195,7 +195,7 @@ void main() {
         });
         test('returns null on inert patterns', () {
           expect(
-            match(1).eval<int>([
+            const match(1).eval<int>([
               any,
               type<int>().then<int>((_) => fail('should be unreachable'))
             ]),

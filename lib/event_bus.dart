@@ -75,8 +75,8 @@ abstract class IAmRetrievableAndMayThrowAn<E>
 
 /// An event which signals it's handler to add an new [T] to the bus.
 class Retrieve<T> implements IAmNotCacheable {
+  const Retrieve([this.argument]);
+
   /// An additional argument passed to the [Retrieve] event
   final Object argument;
-
-  const Retrieve([this.argument]);
 }

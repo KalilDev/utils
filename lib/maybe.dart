@@ -112,13 +112,13 @@ abstract class Maybe<T> extends Monad<T> {
   static Maybe<T> just<T>(T value) => Just<T>(value);
 
   @override
-  Maybe<T> unit<T>(T value) => Maybe.just<T>(value);
+  Maybe<T1> unit<T1>(T1 value) => Maybe.just<T1>(value);
 
   /// Create an [None<T>].
   static Maybe<T> none<T>() => None<T>();
 
   @override
-  Maybe<T> identity<T>() => Maybe.none<T>();
+  Maybe<T1> identity<T1>() => Maybe.none<T1>();
 
   /// Construct an non nullable [Maybe] from an nullable value, with [null]
   /// representing [None].
@@ -191,6 +191,7 @@ abstract class Maybe<T> extends Monad<T> {
 
   /// Executes an mapping operation which is partial in case an value is present
   /// and flattens the result into a single [Maybe].
+  @override
   Maybe<T1> bind<T1>(Maybe<T1> Function(T) f) => visit<Maybe<T1>>(
         just: f,
         none: () => none<T1>(),
@@ -264,7 +265,8 @@ abstract class Maybe<T> extends Monad<T> {
   /// In this case the code would compile but not run.
   ///
   /// So, this is needed:
-  /// `A function(A a) => (a is B ? a.getB().just : None<C>()).cast().valueOr(a);`
+  /// ```A function(A a) =>
+  ///      (a is B ? a.getB().just : None<C>()).cast().valueOr(a);```
   Maybe<T1> cast<T1>() => fmap<T1>((v) => v as T1);
 
   /// Convert this [Maybe] to an [List], with [None] being an empty list and
@@ -299,10 +301,10 @@ class Just<T> extends Maybe<T> {
     if (identical(this, other)) {
       return true;
     }
-    if (other is! Just<T>) {
-      return false;
+    if (other is Just<T>) {
+      return other._value == _value;
     }
-    return other._value == _value;
+    return false;
   }
 
   @override

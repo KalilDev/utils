@@ -43,17 +43,18 @@ class UndoTreeEventSourcedModel<
         B extends EventSourcedSnapshotBuilder<S, B, E>,
         E extends UndoableEventSourcedEvent<S, B, E>>
     extends TreeUndoableEventSourcedModel<S, B, E> {
-  final UndoTree<E> _tree;
+  /// Create an [UndoTreeEventSourcedModel] from an [initialState]
+  UndoTreeEventSourcedModel(S initialState)
+      : _tree = UndoTree<E>()..add(null),
+        super(initialState);
 
   UndoTreeEventSourcedModel._({S initialState, S state, UndoTree<E> tree})
       : _tree = tree,
         _snapshot = state,
         super(initialState);
 
-  /// Create an [UndoTreeEventSourcedModel] from an [initialState]
-  UndoTreeEventSourcedModel(S initialState)
-      : _tree = UndoTree<E>()..add(null),
-        super(initialState);
+  final UndoTree<E> _tree;
+
   @override
   S add(E event) {
     _tree.add(event);

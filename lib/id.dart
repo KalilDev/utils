@@ -4,19 +4,18 @@ import 'type.dart';
 /// performing monadic composition operations on values, and for retrieving the
 /// regular monad version of an monad transformer.
 class Id<A> extends Monad<A> {
-  final A _value;
+  const factory Id(A value) = Id._;
   const Id._(this._value);
-
-  factory Id(A value) = Id._;
+  final A _value;
 
   /// Construct an [Id] with [value]
   static Id<A> ret<A>(A value) => Id(value);
 
   @override
-  Id<A> identity<A>([A value]) => Id<A>(value);
+  Id<A1> identity<A1>([A1 value]) => Id<A1>(value);
 
   @override
-  Id<A> unit<A>(A value) => Id(value);
+  Id<A1> unit<A1>(A1 value) => Id(value);
 
   @override
 
@@ -33,9 +32,9 @@ class Id<A> extends Monad<A> {
   A unwrap() => _value;
 
   @override
-  Id<B> lift<A, B>(
-    Id<B Function(A)> fn,
-    Id<A> a,
+  Id<B1> lift<A1, B1>(
+    Id<B1 Function(A1)> fn,
+    Id<A1> a,
   ) =>
       fn.bind((fn) => a.fmap(fn));
 }

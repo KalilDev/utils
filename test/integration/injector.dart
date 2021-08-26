@@ -90,7 +90,7 @@ abstract class IService {
   void clearCache();
 }
 
-void main() async {
+Future<void> main() async {
   final i = Injector((b) => b
     ..addValue<IClient>(AnInjectedClient())
     ..addValue<IRepository>(AnInjectableRepository())
@@ -129,3 +129,4 @@ class OverridenEndpoint extends IEndpoint {
   @override
   String get endpoint => 'NotTheEndpoint';
 }
+// ignore_for_file: avoid_print, avoid_redundant_argument_values

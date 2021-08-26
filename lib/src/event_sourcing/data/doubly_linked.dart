@@ -84,18 +84,18 @@ class DoublyLinkedEventSourcedModel<
         B extends EventSourcedSnapshotBuilder<S, B, E>,
         E extends UndoableEventSourcedEvent<S, B, E>>
     extends UndoableEventSourcedModel<S, B, E> {
-  var _eventCursor = DoubleLinkedQueueEntry<E>(null);
+  /// Create an [DoublyLinkedEventSourcedModel].
+  DoublyLinkedEventSourcedModel(S initialState)
+      : _eventCursor = DoubleLinkedQueueEntry<E>(null),
+        super(initialState);
+
   DoublyLinkedEventSourcedModel._(
       {S initialState, S state, DoubleLinkedQueueEntry<E> cursor})
       : _eventCursor = cursor,
         _snapshot = state,
         super(initialState);
 
-  /// Create an [DoublyLinkedEventSourcedModel].
-  DoublyLinkedEventSourcedModel(S initialState)
-      : _eventCursor = DoubleLinkedQueueEntry<E>(null),
-        super(initialState);
-
+  var _eventCursor = DoubleLinkedQueueEntry<E>(null);
   @override
   bool canUndo() {
     // we are at the beggining, therefore there aren't any events, so we can't

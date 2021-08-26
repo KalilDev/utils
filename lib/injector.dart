@@ -1,17 +1,18 @@
-import 'package:utils/utils.dart';
-import 'src/injector.dart';
-import 'curry.dart';
-import 'maybe.dart';
-import 'graph.dart';
 import 'package:meta/meta.dart';
+import 'package:utils/utils.dart';
+
+import 'graph.dart';
+import 'maybe.dart';
+import 'src/injector.dart';
+
 export 'src/injector.dart'
     hide InjectorImpl, InjectorScopeImpl, InjectorScopeBuilderImpl;
 
 /// An class used to access instances of an specified type without knowing the
 /// concrete type or value.
 ///
-/// Only one should exist per scope, and if more than one is being used in the program, they should NOT mix
-/// [InjectableConsumer]s. Doing so is an [Error]!
+/// Only one should exist per scope, and if more than one is being used in the
+/// program, they should NOT mix [InjectableConsumer]s. Doing so is an [Error]!
 abstract class Injector {
   /// Create an [Injector] from the changes on a [InjectorScopeBuilder]
   factory Injector(void Function(InjectorScopeBuilder) updates) = InjectorImpl;
@@ -27,8 +28,8 @@ abstract class Injector {
 /// An class used to access instances of an specified type without knowing the
 /// concrete type or value.
 ///
-/// Only one should exist per scope, and if more than one is being used in the program, they should NOT mix
-/// [InjectableConsumer]s. Doing so is an [Error]!
+/// Only one should exist per scope, and if more than one is being used in the
+/// program, they should NOT mix [InjectableConsumer]s. Doing so is an [Error]!
 abstract class InjectorScope {
   /// Create an [InjectorScope] which contains the specified [injectedValues]
   factory InjectorScope.debug(Map<Type, dynamic> injectedValues) =
@@ -100,7 +101,8 @@ abstract class InjectorScopeBuilder {
   /// Apply many updates to this [InjectorScopeBuilder]
   void applyUpdates(void Function(InjectorScopeBuilder) updates);
 
-  /// Create the [InjectorScope] with the values and factories specified in [this].
+  /// Create the [InjectorScope] with the values and factories specified in
+  /// [this].
   InjectorScope build([Maybe<InjectorScope> parent = const None()]);
 }
 
@@ -191,9 +193,18 @@ enum ValueKind {
   leaf,
 }
 
+Never unreachable([Object _]) => throw StateError('Unreachable!');
+
 /// An value representing the type of an value which is injectable, and it's
 /// injected, concrete form.
 class Dependency {
+  /// Create an [Dependency].
+  const Dependency(
+    this.type,
+    this.dep, {
+    this.valueKind = ValueKind.node,
+  });
+
   /// The [Type] that was registered in the [Injector]. It is [None] if the type
   /// was not injected. An [Consumer] for example.
   final Maybe<Type> type;
@@ -203,13 +214,6 @@ class Dependency {
 
   /// The kind of this value
   final ValueKind valueKind;
-
-  /// Create an [Dependency].
-  const Dependency(
-    this.type,
-    this.dep, {
-    this.valueKind = ValueKind.node,
-  });
 
   String _decorated(String s) {
     switch (valueKind) {
@@ -221,20 +225,22 @@ class Dependency {
         return '|$s|';
       case ValueKind.proxyLeaf:
         return '{$s}';
+      default:
+        return unreachable();
     }
   }
 
   @override
-  bool operator ==(other) {
+  bool operator ==(dynamic other) {
     if (identical(this, other)) {
       return true;
     }
-    if (other is! Dependency) {
-      return false;
+    if (other is Dependency) {
+      return type == other.type &&
+          dep == other.dep &&
+          valueKind == other.valueKind;
     }
-    return type == other.type &&
-        dep == other.dep &&
-        valueKind == other.valueKind;
+    return false;
   }
 
   @override
@@ -256,10 +262,9 @@ class Dependency {
 /// An [GraphNode] for an dependency graph constructed from an
 /// [DependencyTreeNode].
 class DependencyGraphNode extends GraphNode<Dependency> {
-  final _edges = <DependencyGraphNode>{};
-
   /// Create an [DependencyGraphNode] with an [Dependency] value.
   DependencyGraphNode(this.value);
+  final _edges = <DependencyGraphNode>{};
 
   @override
   void addEdge(DependencyGraphNode edge) => _edges.add(edge);
@@ -274,14 +279,6 @@ class DependencyGraphNode extends GraphNode<Dependency> {
 /// An [TreeNode] for an dependency tree constructed from an [Consumer] or an
 /// [InjectableConsumer].
 class DependencyTreeNode extends TreeNode<Dependency> {
-  /// The value which was injected or the root of this dependency tree. If
-  /// [self] has dependencies, they will be added to the tree.
-  final Object self;
-
-  /// The [Type] which was retrieved from the [Injector] resulting in [self].
-  /// It is [None] at the root.
-  final Maybe<Type> type;
-
   /// Construct the tree from the [self] root. This may not be cheap, use
   /// carefully.
   DependencyTreeNode(this.self, [this.type = const None()]) {
@@ -291,6 +288,14 @@ class DependencyTreeNode extends TreeNode<Dependency> {
       _children.addAll(s.childNodes());
     }
   }
+
+  /// The value which was injected or the root of this dependency tree. If
+  /// [self] has dependencies, they will be added to the tree.
+  final Object self;
+
+  /// The [Type] which was retrieved from the [Injector] resulting in [self].
+  /// It is [None] at the root.
+  final Maybe<Type> type;
 
   /// Convert this dependency tree to an dependency graph.
   Graph<Dependency, DependencyGraphNode> toGraph({
@@ -309,20 +314,20 @@ class DependencyTreeNode extends TreeNode<Dependency> {
 
   @override
   Dependency get value {
-    var valueKind;
+    ValueKind kind;
     if (self is Consumer) {
-      valueKind ??= ValueKind.proxyNode;
+      kind ??= ValueKind.proxyNode;
     }
     if (self is InjectableProxy) {
-      valueKind ??= ValueKind.proxyLeaf;
+      kind ??= ValueKind.proxyLeaf;
     }
     if (self is DetachedConsumer) {
-      valueKind ??= ValueKind.node;
+      kind ??= ValueKind.node;
     }
     return Dependency(
       type,
       self,
-      valueKind: valueKind ?? ValueKind.leaf,
+      valueKind: kind ?? ValueKind.leaf,
     );
   }
 }

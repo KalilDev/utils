@@ -48,13 +48,14 @@ _EvaluatablePattern<R, T> mapper<T, R>(
         matches == null ? (T v) => v == value : _throwOnDuplicatedMatcher();
   }
   if (values != null) {
+    // ignore: parameter_assignments
     matches = matches == null ? values.contains : _throwOnDuplicatedMatcher();
   }
 
   return _InertPattern<T>(matches).then<R>(fn);
 }
 
-Null _throwOnDuplicatedMatcher() => throw ArgumentError(
+Never _throwOnDuplicatedMatcher() => throw ArgumentError(
     'Only one of `value`, `values` or `matches` may be specified.');
 
 /// Calls the endofunction [fn] [T] -> [T] if the pattern from the optional
@@ -108,11 +109,11 @@ final _InertPattern<Object /*?*/ > any = type<Object /*?*/ >();
 /// ```
 // ignore: camel_case_types
 @Deprecated(_reason)
+// ignore: camel_case_types
 class match<T> {
-  final T _value;
-
   /// Wrap the value with [match].
   const match(this._value);
+  final T _value;
 
   /// Evaluate an [Iterable] of [_Pattern].
   ///
@@ -193,9 +194,8 @@ extension ObjectPatternMatching<T> on T {
 }
 
 abstract class _Pattern<T> {
-  final bool Function(T) _match;
-
   const _Pattern(this._match) : assert(_match != null);
+  final bool Function(T) _match;
 
   bool matches(Object value) {
     if (value is! T) {
@@ -221,10 +221,10 @@ class _InertPattern<T> extends _Pattern<T> {
 }
 
 class _EvaluatablePattern<R, T> extends _Pattern<T> {
-  final R Function(T) __eval;
   const _EvaluatablePattern(bool Function(T) match, this.__eval)
       : assert(__eval != null),
         super(match);
+  final R Function(T) __eval;
 
   R _eval(Object value) {
     if (!matches(value)) {

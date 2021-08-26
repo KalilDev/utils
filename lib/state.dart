@@ -5,9 +5,8 @@ T _identity<T>(T v) => v;
 typedef StateFn<S, A> = Tuple<A, S> Function(S);
 
 class State<S, A> implements Monad<A>, MonadState<S> {
-  final StateFn<S, A> runState;
-
   const State(this.runState);
+  final StateFn<S, A> runState;
 
   @override
   State<S, B> bind<B>(State<S, B> Function(A) fn) =>
@@ -25,7 +24,7 @@ class State<S, A> implements Monad<A>, MonadState<S> {
   }
 
   @override
-  State<S, B> lift<A, B>(State<S, B Function(A)> fn, State<S, A> a) =>
+  State<S, B> lift<A1, B>(State<S, B Function(A1)> fn, State<S, A1> a) =>
       fn.bind((fn) => a.fmap(fn));
 
   @override
@@ -41,7 +40,7 @@ class State<S, A> implements Monad<A>, MonadState<S> {
   State<S, Null> put(S s) => State<S, Null>((_) => Tuple(null, s));
 
   @override
-  State<S, A> state<A>(Tuple<A, S> Function(S) fn) =>
+  State<S, A1> state<A1>(Tuple<A1, S> Function(S) fn) =>
       get().bind((s) => fn(s).visit(
             (a, s) => put(s).unit(a),
           ));
@@ -50,9 +49,8 @@ class State<S, A> implements Monad<A>, MonadState<S> {
 typedef RunReader<E, A> = A Function(E env);
 
 class Reader<E, A> extends Monad<A> implements MonadReader<E> {
-  final RunReader<E, A> runReader;
-
   const Reader(this.runReader);
+  final RunReader<E, A> runReader;
 
   @override
   Reader<E, B> bind<B>(Reader<E, B> Function(A) fn) {
@@ -73,7 +71,7 @@ class Reader<E, A> extends Monad<A> implements MonadReader<E> {
   }
 
   @override
-  Reader<E, B> lift<A, B>(Reader<E, B Function(A)> fn, Reader<E, A> a) {
+  Reader<E, B1> lift<A1, B1>(Reader<E, B1 Function(A1)> fn, Reader<E, A1> a) {
     // TODO: implement lift
     throw UnimplementedError();
   }
@@ -84,15 +82,16 @@ class Reader<E, A> extends Monad<A> implements MonadReader<E> {
     throw UnimplementedError();
   }
 
+  @override
   Reader<E, E> ask() => Reader(_identity);
 
   @override
-  Reader<E, A> local<A>(E Function(E) f, Reader<E, A> m) {
+  Reader<E, A1> local<A1>(E Function(E) f, Reader<E, A1> m) {
     return Reader((e) => runReaders(m, f(e)));
   }
 
   @override
-  Reader<E, A> reader<A>(A Function(E) fn) => ask().fmap(fn);
+  Reader<E, A1> reader<A1>(A1 Function(E) fn) => ask().fmap(fn);
 }
 
 A runReaders<E, A>(Reader<E, A> reader, E env) => null;

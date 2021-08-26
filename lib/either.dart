@@ -7,11 +7,11 @@ T _identity<T>(T v) => v;
 T _notNull<T>(T /*?*/ v) => ArgumentError.checkNotNull(v);
 
 class _LazyEither<E, A> extends Either<E, A> {
+  _LazyEither(this._fn) : super._();
   final A Function() _fn;
 
   Either<E, A> __result;
 
-  _LazyEither(this._fn) : super._();
   Either<E, A> get _result => __result ??= _computeResult();
   Either<E, A> _computeResult() {
     try {
@@ -123,20 +123,20 @@ abstract class Either<A, B> extends Monad<B> implements BiFunctor<A, B> {
   Maybe<B> get maybeRight => visit(a: (_) => Maybe.none(), b: Maybe.just);
 
   @override
-  Either<Exception, B> lift<A, B>(
-    Either<Exception, B Function(A)> fn,
-    Either<Exception, A> a,
+  Either<Exception, B1> lift<A1, B1>(
+    Either<Exception, B1 Function(A1)> fn,
+    Either<Exception, A1> a,
   ) =>
       fn.bind((fn) => a.fmap(fn));
 
   /// Perform the operation [fn] with the value [A] in [a] and wrap with
-  /// [Either<E, B>] for pipelining.
+  /// [Either<E1, B1>] for pipelining.
   ///
-  /// This needs to exist because the [E] type is needed for correct inference
+  /// This needs to exist because the [E1] type is needed for correct inference
   /// on [Either]
-  Either<E, B> liftEither<A, B, E>(
-    Either<E, B Function(A)> fn,
-    Either<E, A> a,
+  Either<E1, B1> liftEither<A1, B1, E1>(
+    Either<E1, B1 Function(A1)> fn,
+    Either<E1, A1> a,
   ) =>
       fn.bind((fn) => a.fmap(fn));
 
@@ -156,10 +156,9 @@ extension MaybeToEither<T> on Maybe<T> {
 
 /// The left [A] value in an [Either] type.
 class Left<A, B> extends Either<A, B> {
-  final A _value;
-
   /// Create an [Left] [Either] with the [_value].
   const Left(this._value) : super._();
+  final A _value;
 
   @override
   T visit<T>({T Function(A p1) a, T Function(B p1) b}) => a?.call(_value);
@@ -167,10 +166,9 @@ class Left<A, B> extends Either<A, B> {
 
 /// The right [B] value in an [Either] type.
 class Right<A, B> extends Either<A, B> {
-  final B _value;
-
   /// Create an [Right] [Either] with the [_value].
   const Right(this._value) : super._();
+  final B _value;
 
   @override
   T visit<T>({T Function(A p1) a, T Function(B) b}) => b?.call(_value);

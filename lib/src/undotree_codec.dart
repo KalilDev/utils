@@ -59,7 +59,7 @@ class UndoTreeDecoder<E> extends Converter<Map<String, dynamic>, UndoTree<E>> {
   @override
   UndoTree<E> convert(Map<String, dynamic> input) {
     if (!input.keys.toSet().containsAll(_keys)) {
-      throw FormatException();
+      throw const FormatException();
     }
     final length = input['length'] as int;
     final current = input['current'] as int;
@@ -68,7 +68,7 @@ class UndoTreeDecoder<E> extends Converter<Map<String, dynamic>, UndoTree<E>> {
     final indices = input['indices'] as Map<String, dynamic>;
 
     if (entries.length != length || nextIndices.length != length) {
-      throw FormatException();
+      throw const FormatException();
     }
     final result = UndoTree<E>()
       .._length = length

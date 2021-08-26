@@ -1,5 +1,7 @@
 import 'dart:async';
 
+import 'package:utils/graph.dart' show nothing;
+
 import 'maybe.dart';
 
 /// Wraps an [Stream<T>] and provides an [value] getter.
@@ -7,14 +9,13 @@ import 'maybe.dart';
 /// Lazily subscribes to the stream when the first listener/subscription is
 /// added.
 class StreamNotifier<T> {
+  /// Wraps the [stream].
+  StreamNotifier(Stream<T> stream) : _stream = stream;
   final Set<void Function(T)> _listeners = <void Function(T)>{};
   final Set<void Function()> _doneListeners = <void Function()>{};
   final Set<Function> _errorListeners = <Function>{};
   final Stream<T> _stream;
   StreamSubscription<T> _subs;
-
-  /// Wraps the [stream].
-  StreamNotifier(Stream<T> stream) : _stream = stream;
 
   void _ensureInitialized() {
     _subs ??= _stream.listen(
@@ -35,7 +36,8 @@ class StreamNotifier<T> {
         if (fn is void Function(Object error, [StackTrace s])) {
           return fn(error, s);
         }
-        return fn(error);
+        final fun = fn as void Function(Object error);
+        return fun(error);
       });
 
   void _addListeners({
@@ -70,7 +72,7 @@ class StreamNotifier<T> {
     }
   }
 
-  Maybe<T> _value = None();
+  Maybe<T> _value = const None();
 
   /// Returns [Just] the current value when present, otherwise returns [None].
   Maybe<T> get value => _value;
@@ -154,8 +156,8 @@ class StreamNotifier<T> {
 /// An [StreamSubscription] for an [StreamNotifier] which emits the following
 /// values only.
 class NotifierSubscription<T> extends _NotifierSubscriptionBase<T> {
-  final StreamNotifier<T> _self;
   NotifierSubscription(this._self);
+  final StreamNotifier<T> _self;
 
   /// Returns [Just] the current value when present, otherwise returns [None].
   Maybe<T> get value => _self.value;
@@ -178,8 +180,8 @@ class NotifierSubscription<T> extends _NotifierSubscriptionBase<T> {
 /// An [StreamSubscription] for an [StreamNotifier] which emits the initial
 /// value, present or not.
 class EagerNotifierSubscription<T> extends _NotifierSubscriptionBase<Maybe<T>> {
-  final StreamNotifier<T> _self;
   EagerNotifierSubscription(this._self);
+  final StreamNotifier<T> _self;
 
   /// Returns [Just] the current value when present, otherwise returns [None].
   Maybe<T> get value => _self.value;
@@ -205,7 +207,7 @@ class EagerNotifierSubscription<T> extends _NotifierSubscriptionBase<Maybe<T>> {
 }
 
 abstract class _NotifierSubscriptionBase<T> implements StreamSubscription<T> {
-  Maybe<T> _queuedEvent = None();
+  Maybe<T> _queuedEvent = const None();
   bool _isPaused = false;
   void Function(T) _handler;
   void Function() _doneHandler;
@@ -273,12 +275,13 @@ abstract class _NotifierSubscriptionBase<T> implements StreamSubscription<T> {
   }) {
     _isPaused = false;
     final queued = _queuedEvent;
-    _queuedEvent = None();
+    _queuedEvent = const None();
     if (!emitLastest) {
       return;
     }
     queued.visit(
       just: _handler,
+      none: nothing,
     );
   }
 }
