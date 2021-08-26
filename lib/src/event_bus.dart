@@ -5,10 +5,12 @@ import '../event_bus.dart';
 
 /// The actual implementation of [EventBus]
 class EventBusImpl implements EventBus {
-  final StreamController _eventsController = StreamController.broadcast();
-  final StreamController _unhandledController = StreamController.broadcast();
+  final StreamController<Object> _eventsController =
+      StreamController.broadcast();
+  final StreamController<Object> _unhandledController =
+      StreamController.broadcast();
   final List<_Listener> _listeners = [];
-  final Map<Type, dynamic> _lastEvent = {};
+  final Map<Type, Object> _lastEvent = {};
   bool _closed = false;
 
   void _maybeCache<T>(T event) {
@@ -65,7 +67,7 @@ class EventBusImpl implements EventBus {
           listener.addEvent(_lastEvent[T] as T);
           return;
         }
-        await Future.delayed(retrieveTimeout);
+        await Future<void>.delayed(retrieveTimeout);
         if (!listener.didAdd) {
           _add<Retrieve<T>>(Retrieve<T>(retrieveArgument));
         }
@@ -182,7 +184,7 @@ class _EitherListener<E, Event extends IMayThrowAn<E>> extends _Listener {
     if (error is! E) {
       throw TypeError();
     }
-    _controller.add(Either.left<E, Event>(error));
+    _controller.add(Either.left<E, Event>(error as E));
   }
 
   @override

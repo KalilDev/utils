@@ -21,7 +21,7 @@ abstract class TreeNode<T> extends Node<T> {
 /// Map every node in a tree to an new node type. It may be used for
 /// converting from one specialized [TreeNode] implementation to another, or for
 /// converting each [TreeNode] value from type [T] to type `NewT` for example.
-T1 mapTree<T, T1 extends TreeNode>(
+T1 mapTree<T, T1 extends TreeNode<Object>>(
   TreeNode<T> root,
   T1 Function(T value, Iterable<T1> children) createNode,
 ) {
@@ -78,7 +78,7 @@ abstract class Graph<T, Node extends GraphNode<T>> {
   );
 }
 
-NewGraph _createOrGetMappedNode<T, NewGraph extends GraphNode>(
+NewGraph _createOrGetMappedNode<T, NewGraph extends GraphNode<Object>>(
   GraphNode<T> root,
   NewGraph Function(T) createNode,
   Map<GraphNode<T>, NewGraph> context,
@@ -131,7 +131,7 @@ class RootGraph<T, Node extends GraphNode<T>> extends Graph<T, Node> {
       visited.add(root);
       yield root;
       for (final edge in root.edges) {
-        yield* _graphNodes(edge, visited: visited);
+        yield* _graphNodes(edge as Node, visited: visited);
       }
     }
   }
@@ -207,7 +207,7 @@ Graph<T, Node> treeToGraph<T, Node extends GraphNode<T>>(
 }
 
 /// An edge from 2 [GraphNode]s in a graph.
-class GraphEdge<Node extends GraphNode> {
+class GraphEdge<Node extends GraphNode<Object>> {
   /// Create an [GraphEdge].
   const GraphEdge(this.from, this.to);
 
@@ -241,7 +241,7 @@ class GraphEdge<Node extends GraphNode> {
 /// exactly once. If an edge is interlinked, it will be emitted once for the
 /// first node linking to the second and once for the second node linking to the
 /// first.
-Iterable<GraphEdge<Node>> graphEdges<Node extends GraphNode>(
+Iterable<GraphEdge<Node>> graphEdges<Node extends GraphNode<Object>>(
   Node root, {
   Set<Node> visited,
 }) sync* {
@@ -250,15 +250,15 @@ Iterable<GraphEdge<Node>> graphEdges<Node extends GraphNode>(
   if (!visited.contains(root)) {
     visited.add(root);
     for (final edge in root.edges) {
-      yield GraphEdge<Node>(root, edge);
-      yield* graphEdges(edge, visited: visited);
+      yield GraphEdge<Node>(root, edge as Node);
+      yield* graphEdges(edge as Node, visited: visited);
     }
   }
 }
 
 /// Converts an tree to an textual representation in a manner similar to the
 /// `tree` command.
-String treeToString<Node extends TreeNode>(
+String treeToString<Node extends TreeNode<Object>>(
   Node root, [
   String Function(Node) describeNode,
 ]) {
@@ -269,7 +269,7 @@ String treeToString<Node extends TreeNode>(
   final children = root.edges.toList();
   for (var i = 0; i < children.length; i++) {
     final child = children[i];
-    final childStr = treeToString<Node>(child, describeNode).trim();
+    final childStr = treeToString<Node>(child as Node, describeNode).trim();
     final childLns = childStr.split('\n');
     final isLast = i + 1 == children.length;
 

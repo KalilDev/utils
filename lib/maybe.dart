@@ -83,10 +83,10 @@ extension MaybeObjectWrapping<T> on T {
   Maybe<T1> maybeAs<T1>() => this is T1 ? Just<T1>(this as T1) : None<T1>();
 }
 
-extension EitherToMaybe<T> on Either<dynamic, T> {
+extension EitherToMaybe<T> on Either<Object, T> {
   Maybe<T> toMaybe() {
     return visit<Maybe<T>>(
-      a: (_) => None<T>(),
+      a: (Object _) => None<T>(),
       b: (r) => Just<T>(r),
     );
   }

@@ -12,7 +12,7 @@ extension FutureOrThen<T> on FutureOr<T> {
 /// [values] is a list of [FutureOr<T>] | [Stream<T>].
 Stream<T> streamCombine<T>(
     List<dynamic /*FutureOr<T> | FutureOr<Stream<T>>*/ > values) {
-  if (!values.every((v) => v is FutureOr<T> || v is Stream<T>)) {
+  if (!values.every((dynamic v) => v is FutureOr<T> || v is Stream<T>)) {
     throw TypeError();
   }
   return _combinedStream<T>(values);

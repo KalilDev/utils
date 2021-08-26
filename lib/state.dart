@@ -15,8 +15,8 @@ class State<S, A> implements Monad<A>, MonadState<S> {
           ));
 
   @override
-  State<S, B> fmap<B>(B Function(A) fn) =>
-      State<S, B>((s) => runState(s).first(fn));
+  State<S, B> fmap<B>(B Function(A) fn) => unreachable();
+  /*State<S, B>((s) => runState(s).first(fn));*/
 
   @override
   State<S, T> identity<T>() {

@@ -17,13 +17,13 @@ class UndoTreeEncoder<E> extends Converter<UndoTree<E>, Map<String, dynamic>> {
   Map<String, dynamic> convert(UndoTree<E> input) {
     final entries = input._headerList.map((h) => h.entry).toList();
     final tails = input.tail?.altIter() ?? [];
-    final indices = Map.fromEntries(tails.map(_walkHeader));
+    final indices = Map<String, dynamic>.fromEntries(tails.map(_walkHeader));
     final nextIndices =
         input._headerList.map((h) => h.next?.index ?? -1).toList();
     final length = input._length;
     final current = input.current?.index;
 
-    return {
+    return <String, dynamic>{
       'length': length,
       'current': current,
       'entries': entries,
@@ -37,9 +37,10 @@ class UndoTreeEncoder<E> extends Converter<UndoTree<E>, Map<String, dynamic>> {
   /// value.
   MapEntry<String, dynamic> _walkHeader(UndoHeader h) {
     final childIter = h.next?.altIter() ?? [];
-    final children = Map.fromEntries(childIter.map(_walkHeader));
+    final children =
+        Map<String, dynamic>.fromEntries(childIter.map(_walkHeader));
 
-    return MapEntry(h.index.toString(), children);
+    return MapEntry<String, dynamic>(h.index.toString(), children);
   }
 }
 
@@ -126,7 +127,7 @@ class UndoTreeDecoder<E> extends Converter<Map<String, dynamic>, UndoTree<E>> {
       onCreated(child);
       if (children.isNotEmpty) {
         _recursiveWalkAdjacent(
-          children,
+          children.cast<String, dynamic>(),
           entries,
           child.append,
           onCreated,

@@ -102,13 +102,13 @@ mixin Consumer implements IInjectDependencies, IScopeProxy {
   }
 
   @override
-  dynamic getUntyped(Type t) {
+  Object getUntyped(Type t) {
     _validate(t);
     return _scope.getUntyped(t);
   }
 
   @override
-  List<dynamic> getAll() => dependencies.map(getUntyped).toList();
+  List<Object> getAll() => dependencies.map(getUntyped).toList();
 
   @override
   void _setScope(InjectorScopeImpl scope) {
@@ -221,13 +221,13 @@ mixin DetachedConsumer implements IInjectDependencies, IDebugAnScope {
   }
 
   @override
-  dynamic getUntyped(Type t) {
+  Object getUntyped(Type t) {
     _check(t);
     return _scope.getUntyped(t);
   }
 
   @override
-  List<dynamic> getAll() {
+  List<Object> getAll() {
     _initScope();
     return dependencies.map(_scope.getUntyped).toList();
   }
@@ -239,7 +239,7 @@ mixin DetachedConsumer implements IInjectDependencies, IDebugAnScope {
     if (this.scope == null) {
       throw StateError('The base scope must not be null');
     }
-    final scope = _getOrCreateScopeFor(this, this.scope);
+    final scope = _getOrCreateScopeFor(this, this.scope as InjectorScopeImpl);
     scope.checkContainsAll(dependencies);
     _scope = scope;
     _ready = true;
@@ -277,7 +277,7 @@ class InjectorImpl implements Injector {
       InjectorImpl._(InjectorScopeImpl(
         (b) => b
           ..addDebugLabel('root')
-          ..applyUpdates(updates),
+          ..applyUpdates(updates as void Function(InjectorScopeBuilder)),
         const None(),
       ));
   factory InjectorImpl.debug(InjectorScope root) => InjectorImpl._(root);
@@ -296,14 +296,15 @@ class InjectorScopeImpl implements InjectorScope {
     void Function(InjectorScopeBuilder) updates,
     Maybe<InjectorScope> parentScope,
   ) =>
-      (InjectorScopeBuilderImpl()..applyUpdates(updates)).build(parentScope);
+      (InjectorScopeBuilderImpl()..applyUpdates(updates)).build(parentScope)
+          as InjectorScopeImpl;
 
   /// Create an [InjectorScope] which contains the specified [injectedValues]
   /// and an optional parent [InjectorScope]. This will propagate the current
   /// scope to the proxies, so you need to override them AFTER creating the
   /// scope.
   InjectorScopeImpl.debug(
-    Map<Type, dynamic> injectedValues, [
+    Map<Type, Object> injectedValues, [
     this._parent = const None(),
   ])  : _injectableTypes = const {},
         _debugLabel = 'debug' {
@@ -320,7 +321,7 @@ class InjectorScopeImpl implements InjectorScope {
   );
 
   final Map<Type, _Injectable> _injectableTypes;
-  final Map<Type, dynamic> _injectedValues = {};
+  final Map<Type, Object> _injectedValues = {};
   final Set<InjectorScopeImpl> _children = {};
   final String _debugLabel;
 
@@ -332,7 +333,7 @@ class InjectorScopeImpl implements InjectorScope {
   T get<T>() => getUntyped(T) as T;
 
   @override
-  dynamic getUntyped(Type t) {
+  Object getUntyped(Type t) {
     if (_injectedValues.containsKey(t)) {
       return _injectedValues[t];
     }
@@ -348,7 +349,7 @@ class InjectorScopeImpl implements InjectorScope {
   }
 
   @override
-  List<dynamic> getAllInjected() => [
+  List<Object> getAllInjected() => [
         ..._injectedValues.values,
         ..._parent.fmap((parent) => parent.getAllInjected()).valueOr([])
       ];

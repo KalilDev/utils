@@ -85,7 +85,7 @@ class StreamNotifier<T> {
   NotifierSubscription<T> listen(
     void Function(T) onValue, {
     void Function() onDone,
-    Function onError,
+    void Function(Object) onError,
   }) =>
       NotifierSubscription(this)
         .._handler = onValue
@@ -101,7 +101,7 @@ class StreamNotifier<T> {
   EagerNotifierSubscription<T> eagerListen(
     void Function(Maybe<T>) onValue, {
     void Function() onDone,
-    Function onError,
+    void Function(Object) onError,
   }) =>
       EagerNotifierSubscription(this)
         .._handler = onValue
@@ -211,7 +211,7 @@ abstract class _NotifierSubscriptionBase<T> implements StreamSubscription<T> {
   bool _isPaused = false;
   void Function(T) _handler;
   void Function() _doneHandler;
-  void Function(Object e, [StackTrace s]) _errorHandler;
+  Function _errorHandler;
 
   @override
   Future<E> asFuture<E>([E futureValue]) {
@@ -243,7 +243,8 @@ abstract class _NotifierSubscriptionBase<T> implements StreamSubscription<T> {
     if (_errorHandler is void Function(Object, [StackTrace])) {
       return _errorHandler?.call(error, s);
     }
-    return _errorHandler?.call(error);
+    final fn = _errorHandler as void Function(Object);
+    return fn?.call(error);
   }
 
   @override

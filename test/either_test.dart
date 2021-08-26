@@ -3,7 +3,7 @@ import 'package:utils/either.dart';
 import 'package:utils/maybe.dart';
 import 'package:utils/curry.dart';
 
-Never _fail([_]) => fail('Should not be called');
+Never _fail([dynamic _]) => fail('Should not be called');
 void main() {
   group('Either', () {
     test('right/left', () {
