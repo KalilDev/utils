@@ -14,14 +14,14 @@ abstract class EventBus {
   Stream<Either<E, Event>>
       eventsOrErrors<E, Event extends IAmRetrievableAndMayThrowAn<E>>({
     Duration retrieveTimeout = const Duration(milliseconds: 10),
-    Object argument,
+    Object? argument,
   });
 
   /// The [Stream] for the next events of type [T] + the last cached one or an
   /// [Retrieve]d one.
   Stream<T> events<T extends IAmRetrievable>({
     Duration retrieveTimeout = const Duration(milliseconds: 10),
-    Object argument,
+    Object? argument,
   });
 
   /// An [Stream] containing only the next events of type [T].
@@ -78,5 +78,5 @@ class Retrieve<T> implements IAmNotCacheable {
   const Retrieve([this.argument]);
 
   /// An additional argument passed to the [Retrieve] event
-  final Object argument;
+  final Object? argument;
 }

@@ -9,7 +9,7 @@ import 'type.dart';
 
 /// python-like range object
 // ignore: camel_case_types
-class range extends Iterable<int /*!*/ > {
+class range extends Iterable<int> {
   const range(
     this.end, [
     this.start = 0,
@@ -33,7 +33,7 @@ class range extends Iterable<int /*!*/ > {
   int get length => (end - start + (crescent ? -1 : 1)) ~/ step + 1;
 
   @override
-  Iterator<int /*!*/ > get iterator => _RangeIterator(this);
+  Iterator<int> get iterator => _RangeIterator(this);
 }
 
 /// An Infinite iterable filled with the value [_value]
@@ -59,14 +59,14 @@ class _InfiniteIterator<T> implements Iterator<T> {
   bool moveNext() => true;
 }
 
-class _RangeIterator extends Iterator<int /*!*/ > {
+class _RangeIterator extends Iterator<int> {
   _RangeIterator(this._self);
   final range _self;
 
-  int /*?*/ _i;
+  int? _i;
 
   @override
-  int get current => _i;
+  int get current => _i!;
 
   @override
   bool moveNext() {
@@ -74,11 +74,13 @@ class _RangeIterator extends Iterator<int /*!*/ > {
       _i = _self.start;
       return _self.start <= _self.end;
     }
-    _i += _self.step;
-    if (_self.crescent && _i >= _self.end) {
+    var i = _i!;
+
+    _i = i += _self.step;
+    if (_self.crescent && i >= _self.end) {
       return false;
     }
-    if (_self.decrescent && _i <= _self.end) {
+    if (_self.decrescent && i <= _self.end) {
       return false;
     }
     return true;
@@ -114,9 +116,9 @@ extension IterableE<T> on Iterable<T> {
   @pragma('vm:prefer-inline')
   Iterable<T1> bind<T1>(Iterable<T1> Function(T) fn) => expand(fn);
   Iterable<Tuple<T, T1>> zip<T1>(Iterable<T1> other) sync* {
-    final ia = iterator, ib = other.iterator;
+    final ia = iterator, ib = other.iterator as Iterator<T>;
     while (ia.moveNext() && ib.moveNext()) {
-      yield Tuple(ia.current, ib.current);
+      yield Tuple(ia.current, ib.current as T1);
     }
   }
 
@@ -129,8 +131,8 @@ extension IterableE<T> on Iterable<T> {
   }
 
   R visit<R>({
-    @required R Function() empty,
-    @required R Function(Iterable<T>) values,
+    required R Function() empty,
+    required R Function(Iterable<T>) values,
   }) =>
       isEmpty ? empty() : values(this);
 }
@@ -142,7 +144,7 @@ extension IterableFutureOrE<T> on Iterable<FutureOr<T>> {
 extension IterableFutureE<T> on Iterable<Future<T>> {
   Future<Iterable<T>> wait({
     bool eagerError = false,
-    void Function(T) cleanUp,
+    void Function(T)? cleanUp,
   }) =>
       Future.wait(this, eagerError: eagerError, cleanUp: cleanUp);
 }

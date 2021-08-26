@@ -35,7 +35,7 @@ mixin InjectableProxy implements IAmAnDependencyTreeNode, IScopeProxy {
   /// dependency tree.
   List<Object> get children;
 
-  InjectorScopeImpl/*!*/ _scope;
+  InjectorScopeImpl? _scope;
 
   @override
   void _setScope(InjectorScopeImpl scope) {
@@ -63,7 +63,7 @@ mixin InjectableProxy implements IAmAnDependencyTreeNode, IScopeProxy {
   }) {
     final newImpl = newScope as InjectorScopeImpl;
     _scope = _overrideScopeForDebug(
-      _scope,
+      _scope!,
       newImpl,
       mode: mode,
     );
@@ -76,7 +76,7 @@ mixin InjectableProxy implements IAmAnDependencyTreeNode, IScopeProxy {
 /// It gets the correct [InjectorScope] automatically when being injected, and
 /// takes care of passing it down automatically to it's dependencies if needed.
 mixin Consumer implements IInjectDependencies, IScopeProxy {
-  InjectorScopeImpl _scope;
+  InjectorScopeImpl? _scope;
 
   @override
   List<DependencyTreeNode> childNodes() => dependencies
@@ -98,17 +98,17 @@ mixin Consumer implements IInjectDependencies, IScopeProxy {
   @override
   T get<T>() {
     _validate(T);
-    return _scope.get<T>();
+    return _scope!.get<T>();
   }
 
   @override
-  Object/*!*/ getUntyped(Type t) {
+  Object getUntyped(Type t) {
     _validate(t);
-    return _scope.getUntyped(t);
+    return _scope!.getUntyped(t);
   }
 
   @override
-  List<Object/*!*/> getAll() => dependencies.map(getUntyped).toList();
+  List<Object> getAll() => dependencies.map(getUntyped).toList();
 
   @override
   void _setScope(InjectorScopeImpl scope) {
@@ -119,7 +119,7 @@ mixin Consumer implements IInjectDependencies, IScopeProxy {
     }
 
     if (_didInject(scope)) {
-      _scope.checkContainsAll(dependencies);
+      _scope!.checkContainsAll(dependencies);
       return;
     }
     throw StateError('The scope is not valid!');
@@ -137,7 +137,7 @@ mixin Consumer implements IInjectDependencies, IScopeProxy {
   }) {
     final newImpl = newScope as InjectorScopeImpl;
     _scope = _overrideScopeForDebug(
-      _scope,
+      _scope!,
       newImpl,
       mode: mode,
     );
@@ -171,7 +171,7 @@ mixin DetachedConsumer implements IInjectDependencies, IDebugAnScope {
   /// created scope.
   InjectorScope get scope;
 
-  InjectorScopeImpl _scope;
+  InjectorScopeImpl? _scope;
 
   @override
   List<DependencyTreeNode> childNodes() => dependencies
@@ -217,19 +217,19 @@ mixin DetachedConsumer implements IInjectDependencies, IDebugAnScope {
   @override
   T get<T>() {
     _check(T);
-    return _scope.get<T>();
+    return _scope!.get<T>();
   }
 
   @override
-  Object/*!*/ getUntyped(Type t) {
+  Object getUntyped(Type t) {
     _check(t);
-    return _scope.getUntyped(t);
+    return _scope!.getUntyped(t);
   }
 
   @override
-  List<Object/*!*/> getAll() {
+  List<Object> getAll() {
     _initScope();
-    return dependencies.map(_scope.getUntyped).toList();
+    return dependencies.map(_scope!.getUntyped).toList();
   }
 
   void _initScope() {
@@ -294,7 +294,7 @@ class InjectorScopeImpl implements InjectorScope {
   /// # It should NOT be used outside of the internal implementation!
   factory InjectorScopeImpl(
     void Function(InjectorScopeBuilder) updates,
-    Maybe<InjectorScope/*!*/> parentScope,
+    Maybe<InjectorScope> parentScope,
   ) =>
       (InjectorScopeBuilderImpl()..applyUpdates(updates)).build(parentScope)
           as InjectorScopeImpl;
@@ -321,37 +321,37 @@ class InjectorScopeImpl implements InjectorScope {
   );
 
   final Map<Type, _Injectable> _injectableTypes;
-  final Map<Type, Object/*!*/> _injectedValues = {};
+  final Map<Type, Object> _injectedValues = {};
   final Set<InjectorScopeImpl> _children = {};
-  final String _debugLabel;
+  final String? _debugLabel;
 
   /// Not final so that [IDebugAnScope] can override the parent of an child
   /// node.
-  Maybe<InjectorScopeImpl> _parent;
+  Maybe<InjectorScopeImpl?> _parent;
 
   @override
   T get<T>() => getUntyped(T) as T;
 
   @override
-  Object/*!*/ getUntyped(Type t) {
+  Object getUntyped(Type t) {
     if (_injectedValues.containsKey(t)) {
-      return _injectedValues[t];
+      return _injectedValues[t]!;
     }
     if (_injectableTypes.containsKey(t)) {
-      final injectable = _injectableTypes.remove(t);
+      final injectable = _injectableTypes.remove(t)! as _Injectable<Object>;
       return _injectedValues[t] = injectable.getOrCreate(this);
     }
     return _parent.visit(
-        just: (parent) => parent.getUntyped(t),
-        none: () => throw StateError(
+        just: (parent) => parent!.getUntyped(t),
+        none: (() => throw StateError(
               'The type $t is not injectable by this injector',
-            ));
+            )) as Object Function());
   }
 
   @override
-  List<Object/*!*/> getAllInjected() => [
+  List<Object> getAllInjected() => [
         ..._injectedValues.values,
-        ..._parent.fmap((parent) => parent.getAllInjected()).valueOr([])
+        ..._parent.fmap((parent) => parent!.getAllInjected()).valueOr([])
       ];
 
   bool _contains(Type t) {
@@ -359,7 +359,7 @@ class InjectorScopeImpl implements InjectorScope {
       return true;
     }
     return _parent.visit(
-      just: (parent) => parent._contains(t),
+      just: (parent) => parent!._contains(t),
       none: () => false,
     );
   }
@@ -377,7 +377,7 @@ class InjectorScopeImpl implements InjectorScope {
   @override
   List<Type> injectableTypes() => [
         ..._thisScopeInjectableTypes,
-        ..._parent.fmap((parent) => parent.injectableTypes()).valueOr(<Type>[])
+        ..._parent.fmap((parent) => parent!.injectableTypes()).valueOr(<Type>[])
       ];
   List<Type> get _thisScopeInjectableTypes => [
         ..._injectedValues.keys,
@@ -453,7 +453,7 @@ class _BoundFactoryInjectable<T> extends _Injectable<T> {
     if (v is! IScopeProxy) {
       throw StateError('boundFactory should only be used for proxy values!');
     }
-    final val = v as IScopeProxy;
+    final val = v;
     if (!val._didInject(scope)) {
       throw StateError('You must call bind on addBoundFactory! '
           'If you do not need the bind functionality, use addFactory');
@@ -488,7 +488,7 @@ class _InjectedFactoryInjectable<T> extends _Injectable<T> {
 /// The actual implementation for the [InjectorScopeBuilder] type
 class InjectorScopeBuilderImpl implements InjectorScopeBuilder {
   final Map<Type, _Injectable> _injectableTypes = {};
-  String _debugLabel;
+  String? _debugLabel;
 
   void _checkType<T>() {
     final duplicates =
@@ -525,7 +525,7 @@ class InjectorScopeBuilderImpl implements InjectorScopeBuilder {
   }
 
   @override
-  InjectorScope build([Maybe<InjectorScope/*!*/> parent = const None()]) =>
+  InjectorScope build([Maybe<InjectorScope> parent = const None()]) =>
       InjectorScopeImpl._(_injectableTypes, parent.cast(), _debugLabel);
 
   @override
@@ -555,7 +555,7 @@ InjectorScopeImpl _getOrCreateScopeFor(
         (b) => b
           ..addDebugLabel(maybeCreatesScope.runtimeType.toString())
           ..applyUpdates(maybeCreatesScope.createScope),
-        parentScope.just);
+        parentScope.just as Maybe<InjectorScope>);
     parentScope._children.add(newScope);
     return newScope;
   }
@@ -568,7 +568,7 @@ InjectorScopeImpl _getOrCreateScopeFor(
 InjectorScopeImpl _overrideScopeForDebug(
   InjectorScopeImpl oldScope,
   InjectorScopeImpl newScope, {
-  ScopeOverridingMode/*!*/ mode,
+  required ScopeOverridingMode mode,
 }) {
   // Move the children from the oldScope to the newScope
   newScope._children //
@@ -588,7 +588,7 @@ InjectorScopeImpl _overrideScopeForDebug(
       // children
       oldScope._parent.visit(
         just: (parent) {
-          parent._children
+          parent!._children
             ..remove(oldScope)
             ..add(newScope);
         },
@@ -599,7 +599,7 @@ InjectorScopeImpl _overrideScopeForDebug(
     case ScopeOverridingMode.detach:
       // Remove the oldScope from the parent
       oldScope._parent.visit(
-        just: (p) => p._children.remove(oldScope),
+        just: (p) => p!._children.remove(oldScope),
         none: unreachable,
       );
       return newScope;

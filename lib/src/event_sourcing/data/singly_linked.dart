@@ -15,20 +15,20 @@ class SinglyLinkedEventSourcedModelCodec<
         S extends EventSourcedSnapshot<S, B, E>,
         B extends EventSourcedSnapshotBuilder<S, B, E>,
         E extends EventSourcedEvent<S, B, E>>
-    extends Codec<SinglyLinkedEventSourcedModel<S/*!*/, B, E>,
+    extends Codec<SinglyLinkedEventSourcedModel<S, B, E>,
         Map<String, dynamic>> {
   /// Create an [SinglyLinkedEventSourcedModelCodec].
   const SinglyLinkedEventSourcedModelCodec();
 
   @override
-  Converter<Map<String, dynamic>, SinglyLinkedEventSourcedModel<S/*!*/, B, E>>
+  Converter<Map<String, dynamic>, SinglyLinkedEventSourcedModel<S, B, E>>
       get decoder =>
-          ConverterFn((m) => SinglyLinkedEventSourcedModel<S/*!*/, B, E>._(
+          ConverterFn((m) => SinglyLinkedEventSourcedModel<S, B, E>._(
                 initialState:
-                    ArgumentError.checkNotNull(m['initialState'] as S),
+                    ArgumentError.checkNotNull(m['initialState'] as S?),
                 state: m['state'] as S,
                 eventList: LinkedList()
-                  ..addAll(ArgumentError.checkNotNull(m['eventList'] as List)
+                  ..addAll(ArgumentError.checkNotNull(m['eventList'] as List?)
                       .cast<E>()
                       .map((e) => _EventListNode(e))),
               ));
@@ -54,12 +54,12 @@ class SinglyLinkedEventSourcedModel<
         super(initialState);
 
   SinglyLinkedEventSourcedModel._(
-      {S/*!*/ initialState, S/*!*/ state, LinkedList<_EventListNode<E>> eventList})
+      {required S initialState, required S state, required LinkedList<_EventListNode<E>> eventList})
       : _snapshot = state,
         _eventList = eventList,
         super(initialState);
 
-  final LinkedList<_EventListNode<E>>/*!*/ _eventList;
+  final LinkedList<_EventListNode<E>> _eventList;
 
   @override
   S add(E event) {
@@ -78,13 +78,13 @@ class SinglyLinkedEventSourcedModel<
   }
 
   @override
-  S/*!*/ get snapshot => _snapshot ?? initialState;
-  S _snapshot;
+  S get snapshot => _snapshot ?? initialState;
+  S? _snapshot;
 
   @override
   ModelUndoState get undoState => const ModelUndoState();
 
   @override
-  Codec<EventSourcedModel<S/*!*/, B, E>, Map<String, dynamic>> get codec =>
+  Codec<EventSourcedModel<S, B, E>, Map<String, dynamic>> get codec =>
       SinglyLinkedEventSourcedModelCodec<S, B, E>();
 }

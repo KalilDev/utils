@@ -61,10 +61,10 @@ abstract class GraphNode<T> extends Node<T> {
   Set<GraphNode<T>> get edges;
 
   /// Add an new edge to this [GraphNode].
-  void addEdge(covariant GraphNode<T>/*!*/ edge);
+  void addEdge(covariant GraphNode<T> edge);
 }
 
-abstract class Graph<T, Node extends GraphNode<T>/*!*/> {
+abstract class Graph<T, Node extends GraphNode<T>> {
   /// Get an iterable of every [Node] in the graph. Every node will be emitted
   /// exactly once.
   Iterable<Node> nodes();
@@ -73,18 +73,18 @@ abstract class Graph<T, Node extends GraphNode<T>/*!*/> {
   /// converting from one specialized [GraphNode] implementation to another, or
   /// for converting each [GraphNode] value from type [T] to type `NewT` for
   /// example.
-  Graph<T1, NewNode> map<T1, NewNode extends GraphNode<T1>>(
+  Graph<T1, NewNode> map<T1 extends Object, NewNode extends GraphNode<T1>>(
     NewNode Function(T) createNode,
   );
 }
 
-NewGraph/*!*/ _createOrGetMappedNode<T, NewGraph extends GraphNode<Object/*!*/>>(
-  GraphNode<T>/*!*/ root,
+NewGraph _createOrGetMappedNode<T, NewGraph extends GraphNode<Object>>(
+  GraphNode<T> root,
   NewGraph Function(T) createNode,
-  Map<GraphNode<T>/*!*/, NewGraph> context,
+  Map<GraphNode<T>, NewGraph> context,
 ) {
   if (context.containsKey(root)) {
-    return context[root];
+    return context[root]!;
   }
   final newNode = ArgumentError.checkNotNull(createNode(root.value));
   // we need to add the new node before traversing it's edges otherwise we will
@@ -98,7 +98,7 @@ NewGraph/*!*/ _createOrGetMappedNode<T, NewGraph extends GraphNode<Object/*!*/>>
   return newNode;
 }
 
-class NodesGraph<T, Node extends GraphNode<T>/*!*/> extends Graph<T, Node> {
+class NodesGraph<T, Node extends GraphNode<T>> extends Graph<T, Node> {
   NodesGraph(this._nodes);
   final List<Node> _nodes;
 
@@ -106,7 +106,7 @@ class NodesGraph<T, Node extends GraphNode<T>/*!*/> extends Graph<T, Node> {
   Iterable<Node> nodes() => _nodes;
 
   @override
-  Graph<T1, NewNode/*!*/> map<T1, NewNode extends GraphNode<T1>>(
+  Graph<T1, NewNode> map<T1 extends Object, NewNode extends GraphNode<T1>>(
     NewNode Function(T) createNode,
   ) {
     ArgumentError.checkNotNull(createNode);
@@ -118,13 +118,13 @@ class NodesGraph<T, Node extends GraphNode<T>/*!*/> extends Graph<T, Node> {
   }
 }
 
-class RootGraph<T, Node extends GraphNode<T>/*!*/> extends Graph<T, Node> {
+class RootGraph<T, Node extends GraphNode<T>> extends Graph<T, Node> {
   RootGraph(this._root);
   final Node _root;
 
   Iterable<Node> _graphNodes(
     Node root, {
-    Set<Node>/*!*/ visited,
+    Set<Node>? visited,
   }) sync* {
     visited ??= {};
     if (!visited.contains(root)) {
@@ -140,12 +140,13 @@ class RootGraph<T, Node extends GraphNode<T>/*!*/> extends Graph<T, Node> {
   Iterable<Node> nodes() => _graphNodes(_root);
 
   @override
-  Graph<T1, NewNode/*!*/> map<T1, NewNode extends GraphNode<T1>>(
+  Graph<T1, NewNode> map<T1 extends Object, NewNode extends GraphNode<T1>>(
     NewNode Function(T) createNode,
   ) {
     final visited = <Node, NewNode>{};
-    final newRootNode = _createOrGetMappedNode(_root, createNode, visited);
-    return RootGraph<T1, NewNode/*!*/>(newRootNode);
+    final NewNode newRootNode =
+        _createOrGetMappedNode(_root!, createNode, visited);
+    return RootGraph<T1, NewNode>(newRootNode);
   }
 }
 
@@ -162,7 +163,7 @@ enum TreeToGraphLinkType {
   /// linking to the parent
   interlinked
 }
-T nothing<T>([Object o]) => null;
+T? nothing<T>([Object? o]) => null;
 
 /// Convert an tree, which may have more than one [TreeNode] representing the
 /// same value into an [Graph], which may be interlinked or not.
@@ -203,7 +204,7 @@ Graph<T, Node> treeToGraph<T, Node extends GraphNode<T>>(
   if (linkType == TreeToGraphLinkType.reverse) {
     return NodesGraph(valueNodeMap.values.toList());
   }
-  return RootGraph(valueNodeMap[root.value]);
+  return RootGraph(valueNodeMap[root.value]!);
 }
 
 /// An edge from 2 [GraphNode]s in a graph.
@@ -243,7 +244,7 @@ class GraphEdge<Node extends GraphNode<Object>> {
 /// first.
 Iterable<GraphEdge<Node>> graphEdges<Node extends GraphNode<Object>>(
   Node root, {
-  Set<Node> visited,
+  Set<Node>? visited,
 }) sync* {
   ArgumentError.checkNotNull(root);
   visited ??= {};
@@ -251,7 +252,7 @@ Iterable<GraphEdge<Node>> graphEdges<Node extends GraphNode<Object>>(
     visited.add(root);
     for (final edge in root.edges) {
       yield GraphEdge<Node>(root, edge as Node);
-      yield* graphEdges(edge as Node, visited: visited);
+      yield* graphEdges(edge, visited: visited);
     }
   }
 }
@@ -260,7 +261,7 @@ Iterable<GraphEdge<Node>> graphEdges<Node extends GraphNode<Object>>(
 /// `tree` command.
 String treeToString<Node extends TreeNode<Object>>(
   Node root, [
-  String Function(Node) describeNode,
+  String Function(Node)? describeNode,
 ]) {
   ArgumentError.checkNotNull(root);
   final buff = StringBuffer()

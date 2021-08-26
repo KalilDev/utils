@@ -2,7 +2,7 @@ part of '../undotree.dart';
 
 /// This [Codec] encodes an [UndoTree] into an json compatible map, and decodes
 /// into an fresh [UndoTree].
-class UndoTreeCodec<E> extends Codec<UndoTree<E>/*!*/, Map<String, dynamic>> {
+class UndoTreeCodec<E> extends Codec<UndoTree<E>, Map<String, dynamic>> {
   @override
   final UndoTreeDecoder<E> decoder = UndoTreeDecoder<E>();
 
@@ -63,7 +63,7 @@ class UndoTreeDecoder<E> extends Converter<Map<String, dynamic>, UndoTree<E>> {
       throw const FormatException();
     }
     final length = input['length'] as int;
-    final current = input['current'] as int;
+    final current = input['current'] as int?;
     final entries = (input['entries'] as List).cast<E>();
     final nextIndices = (input['nextIndices'] as List).cast<int>();
     final indices = input['indices'] as Map<String, dynamic>;
@@ -97,8 +97,8 @@ class UndoTreeDecoder<E> extends Converter<Map<String, dynamic>, UndoTree<E>> {
       result._current = result._headerList[current];
     }
     result._current ??= root;
-    result._tail = result.current.tail();
-    result._head = result.current.head();
+    result._tail = result.current!.tail();
+    result._head = result.current!.head();
 
     return result;
   }
@@ -107,13 +107,13 @@ class UndoTreeDecoder<E> extends Converter<Map<String, dynamic>, UndoTree<E>> {
   /// by using [appendToPrevious] on the first pair, and then walk every
   /// children in the pair with [child.append] as the [appendToPrevious]
   /// argument.
-  UndoHeader<E> _recursiveWalkAdjacent(
+  UndoHeader<E>? _recursiveWalkAdjacent(
     Map<String, dynamic> adjacentIndices,
     List<E> entries,
     UndoHeader<E> Function(E, int) appendToPrevious,
     void Function(UndoHeader<E>) onCreated,
   ) {
-    UndoHeader<E> localRoot;
+    UndoHeader<E>? localRoot;
     for (final e in adjacentIndices.entries) {
       final i = int.parse(e.key);
       final children = e.value as Map<dynamic, dynamic>;

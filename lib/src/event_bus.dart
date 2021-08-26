@@ -5,12 +5,12 @@ import '../event_bus.dart';
 
 /// The actual implementation of [EventBus]
 class EventBusImpl implements EventBus {
-  final StreamController<Object/*!*/> _eventsController =
+  final StreamController<Object> _eventsController =
       StreamController.broadcast();
-  final StreamController<Object/*!*/> _unhandledController =
+  final StreamController<Object> _unhandledController =
       StreamController.broadcast();
   final List<_Listener> _listeners = [];
-  final Map<Type, Object/*!*/> _lastEvent = {};
+  final Map<Type, Object> _lastEvent = {};
   bool _closed = false;
 
   void _maybeCache<T>(T event) {
@@ -20,7 +20,7 @@ class EventBusImpl implements EventBus {
     if (event is IAmNotCacheable) {
       return;
     }
-    _lastEvent[T] = event;
+    _lastEvent[T] = event!;
   }
 
   void _addError<E, Event extends IMayThrowAn<E>>(E error) {
@@ -36,7 +36,7 @@ class EventBusImpl implements EventBus {
       // _unhandledController.add(event);
     } else {
       // ignore: avoid_function_literals_in_foreach_calls
-      listeners.forEach((l) => l.addError(error));
+      listeners.forEach((l) => l.addError(error!));
     }
   }
 
@@ -46,7 +46,7 @@ class EventBusImpl implements EventBus {
     }
 
     final listeners = _listeners.where((l) => l.canAdd(T));
-    _eventsController.add(event);
+    _eventsController.add(event!);
     if (listeners.isEmpty) {
       _unhandledController.add(event);
     } else {
@@ -59,12 +59,12 @@ class EventBusImpl implements EventBus {
   void _addRetrieveToListener<T extends IAmRetrievable>(
     _Listener listener,
     Duration retrieveTimeout,
-    Object retrieveArgument,
+    Object? retrieveArgument,
   ) {
     listener
       ..onListen = () async {
         if (_lastEvent.containsKey(T) && _lastEvent[T] is T) {
-          listener.addEvent(_lastEvent[T] as T);
+          listener.addEvent(_lastEvent[T] as T?);
           return;
         }
         await Future<void>.delayed(retrieveTimeout);
@@ -81,7 +81,7 @@ class EventBusImpl implements EventBus {
   Stream<Either<E, Event>>
       eventsOrErrors<E, Event extends IAmRetrievableAndMayThrowAn<E>>({
     Duration retrieveTimeout = const Duration(milliseconds: 10),
-    Object argument,
+    Object? argument,
   }) {
     final l = _EitherListener<E, Event>();
     _addRetrieveToListener<Event>(l, retrieveTimeout, argument);
@@ -92,7 +92,7 @@ class EventBusImpl implements EventBus {
   @override
   Stream<T> events<T extends IAmRetrievable>({
     Duration retrieveTimeout = const Duration(milliseconds: 10),
-    Object argument,
+    Object? argument,
   }) {
     final l = _RegularListener<T>();
     _addRetrieveToListener<T>(l, retrieveTimeout, argument);
@@ -144,14 +144,14 @@ class EventBusImpl implements EventBus {
 
 abstract class _Listener {
   bool didAdd = false;
-  FutureOr<void> Function() get onListen;
-  set onListen(FutureOr<void> Function() onListen);
-  FutureOr<void> Function() get onCancel;
-  set onCancel(FutureOr<void> Function() onCancel);
+  FutureOr<void> Function()? get onListen;
+  set onListen(FutureOr<void> Function()? onListen);
+  FutureOr<void> Function()? get onCancel;
+  set onCancel(FutureOr<void> Function()? onCancel);
 
   bool canAdd(Type eventType);
 
-  void addError(Object/*!*/ error);
+  void addError(Object error);
 
   void addEvent(dynamic event);
 
@@ -163,15 +163,15 @@ class _EitherListener<E, Event extends IMayThrowAn<E>> extends _Listener {
       StreamController<Either<E, Event>>();
 
   @override
-  FutureOr<void> Function() get onListen => _controller.onListen;
+  FutureOr<void> Function()? get onListen => _controller.onListen;
   @override
-  set onListen(FutureOr<void> Function() onListen) =>
+  set onListen(FutureOr<void> Function()? onListen) =>
       _controller.onListen = onListen;
 
   @override
-  FutureOr<void> Function() get onCancel => _controller.onCancel;
+  FutureOr<void> Function()? get onCancel => _controller.onCancel;
   @override
-  set onCancel(FutureOr<void> Function() onCancel) =>
+  set onCancel(FutureOr<void> Function()? onCancel) =>
       _controller.onCancel = onCancel;
 
   Stream<Either<E, Event>> get stream => _controller.stream;
@@ -193,7 +193,7 @@ class _EitherListener<E, Event extends IMayThrowAn<E>> extends _Listener {
       throw TypeError();
     }
     didAdd = true;
-    _controller.add(Either.right<E, Event>(event as Event));
+    _controller.add(Either.right<E, Event>(event));
   }
 
   @override
@@ -207,17 +207,17 @@ class _RegularListener<T> extends _Listener {
   final StreamController<T> _controller = StreamController<T>();
 
   @override
-  FutureOr<void> Function() get onListen => _controller.onListen;
+  FutureOr<void> Function()? get onListen => _controller.onListen;
 
   @override
-  set onListen(FutureOr<void> Function() onListen) =>
+  set onListen(FutureOr<void> Function()? onListen) =>
       _controller.onListen = onListen;
 
   @override
-  FutureOr<void> Function() get onCancel => _controller.onCancel;
+  FutureOr<void> Function()? get onCancel => _controller.onCancel;
 
   @override
-  set onCancel(FutureOr<void> Function() onCancel) =>
+  set onCancel(FutureOr<void> Function()? onCancel) =>
       _controller.onCancel = onCancel;
 
   Stream<T> get stream => _controller.stream;
@@ -236,7 +236,7 @@ class _RegularListener<T> extends _Listener {
       throw TypeError();
     }
     didAdd = true;
-    _controller.add(event as T);
+    _controller.add(event);
   }
 
   @override

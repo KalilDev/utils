@@ -32,11 +32,11 @@ abstract class Injector {
 /// program, they should NOT mix [InjectableConsumer]s. Doing so is an [Error]!
 abstract class InjectorScope {
   /// Create an [InjectorScope] which contains the specified [injectedValues]
-  factory InjectorScope.debug(Map<Type, dynamic> injectedValues) =
+  factory InjectorScope.debug(Map<Type, Object> injectedValues) =
       InjectorScopeImpl.debug;
 
   /// Get the injected instance of type [T]
-  T/*!*/ get<T>();
+  T get<T>();
 
   /// Get the instance of type [t], without any static type safety.
   dynamic getUntyped(Type t);
@@ -113,7 +113,7 @@ abstract class IInjectDependencies implements IAmAnDependencyTreeNode {
   List<Type> get dependencies;
 
   /// Get an [T] dependency from the [Injector].
-  T/*!*/ get<T>();
+  T get<T>();
 
   /// Get an untyped [t] dependency from the [Injector].
   dynamic getUntyped(Type t);
@@ -193,7 +193,7 @@ enum ValueKind {
   leaf,
 }
 
-Never unreachable([Object _]) => throw StateError('Unreachable!');
+Never unreachable([Object? _]) => throw StateError('Unreachable!');
 
 /// An value representing the type of an value which is injectable, and it's
 /// injected, concrete form.
@@ -207,7 +207,7 @@ class Dependency {
 
   /// The [Type] that was registered in the [Injector]. It is [None] if the type
   /// was not injected. An [Consumer] for example.
-  final Maybe<Type> type;
+  final Maybe<Type?> type;
 
   /// The injected/regular value.
   final Object dep;
@@ -226,7 +226,7 @@ class Dependency {
       case ValueKind.proxyLeaf:
         return '{$s}';
       default:
-        return unreachable();
+        return unreachable()!;
     }
   }
 
@@ -264,13 +264,13 @@ class Dependency {
 class DependencyGraphNode extends GraphNode<Dependency> {
   /// Create an [DependencyGraphNode] with an [Dependency] value.
   DependencyGraphNode(this.value);
-  final _edges = <DependencyGraphNode/*!*/>{};
+  final _edges = <DependencyGraphNode>{};
 
   @override
-  void addEdge(DependencyGraphNode/*!*/ edge) => _edges.add(edge);
+  void addEdge(DependencyGraphNode edge) => _edges.add(edge);
 
   @override
-  Set<DependencyGraphNode/*!*/> get edges => _edges;
+  Set<DependencyGraphNode> get edges => _edges;
 
   @override
   final Dependency value;
@@ -295,10 +295,10 @@ class DependencyTreeNode extends TreeNode<Dependency> {
 
   /// The [Type] which was retrieved from the [Injector] resulting in [self].
   /// It is [None] at the root.
-  final Maybe<Type> type;
+  final Maybe<Type?> type;
 
   /// Convert this dependency tree to an dependency graph.
-  Graph<Dependency, DependencyGraphNode/*!*/> toGraph({
+  Graph<Dependency, DependencyGraphNode> toGraph({
     TreeToGraphLinkType linkType = TreeToGraphLinkType.direct,
   }) =>
       treeToGraph(
@@ -314,7 +314,7 @@ class DependencyTreeNode extends TreeNode<Dependency> {
 
   @override
   Dependency get value {
-    ValueKind/*?*/ kind;
+    ValueKind? kind;
     if (self is Consumer) {
       kind ??= ValueKind.proxyNode;
     }

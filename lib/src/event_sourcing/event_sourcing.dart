@@ -4,7 +4,7 @@ export 'data.dart';
 
 /// An event sourced model which can add events, moving forward.
 abstract class EventSourcedModel<
-    S extends EventSourcedSnapshot<S, B, E>/*!*/,
+    S extends EventSourcedSnapshot<S, B, E>,
     B extends EventSourcedSnapshotBuilder<S, B, E>,
     E extends EventSourcedEvent<S, B, E>> {
   EventSourcedModel(this.initialState);
@@ -73,7 +73,7 @@ abstract class UndoableEventSourcedEvent<
 /// An event sourced model which can add events, moving forward and move the
 /// event cursor backwards, moving backwards.
 abstract class UndoableEventSourcedModel<
-        S extends EventSourcedSnapshot<S, B, E>/*!*/,
+        S extends EventSourcedSnapshot<S, B, E>,
         B extends EventSourcedSnapshotBuilder<S, B, E>,
         E extends UndoableEventSourcedEvent<S, B, E>>
     extends EventSourcedModel<S, B, E> {
@@ -89,9 +89,9 @@ abstract class UndoableEventSourcedModel<
 /// event cursor backwards, moving backwards and creating subbranches when
 /// adding events while not on a tip.
 abstract class TreeUndoableEventSourcedModel<
-        S extends EventSourcedSnapshot<S, B, E>/*!*/,
+        S extends EventSourcedSnapshot<S, B, E>,
         B extends EventSourcedSnapshotBuilder<S, B, E>,
-        E extends UndoableEventSourcedEvent<S, B, E>/*!*/>
+        E extends UndoableEventSourcedEvent<S, B, E>>
     extends UndoableEventSourcedModel<S, B, E> {
   /// Create an [TreeUndoableEventSourcedModel].
   TreeUndoableEventSourcedModel(S initialState) : super(initialState);
@@ -114,8 +114,8 @@ class ModelUndoState {
     this.prevAlt,
   });
 
-  final bool undo;
-  final bool redo;
-  final bool nextAlt;
-  final bool prevAlt;
+  final bool? undo;
+  final bool? redo;
+  final bool? nextAlt;
+  final bool? prevAlt;
 }

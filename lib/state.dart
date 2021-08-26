@@ -15,7 +15,7 @@ class State<S, A> implements Monad<A>, MonadState<S> {
           ));
 
   @override
-  State<S, B> fmap<B>(B Function(A) fn) => unreachable();
+  State<S, B> fmap<B>(B Function(A) fn) => unreachable()!;
   /*State<S, B>((s) => runState(s).first(fn));*/
 
   @override
@@ -86,7 +86,7 @@ class Reader<E, A> extends Monad<A> implements MonadReader<E> {
   Reader<E, E> ask() => Reader(_identity);
 
   @override
-  Reader<E, A1/*!*/> local<A1>(E Function(E) f, Reader<E, A1> m) {
+  Reader<E, A1> local<A1>(E Function(E) f, Reader<E, A1> m) {
     return Reader((e) => runReaders(m, f(e)));
   }
 
@@ -94,4 +94,4 @@ class Reader<E, A> extends Monad<A> implements MonadReader<E> {
   Reader<E, A1> reader<A1>(A1 Function(E) fn) => ask().fmap(fn);
 }
 
-A/*!*/ runReaders<E, A>(Reader<E, A> reader, E env) => null;
+A runReaders<E, A>(Reader<E, A> reader, E env) => unreachable();

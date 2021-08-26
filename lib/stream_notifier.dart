@@ -15,7 +15,7 @@ class StreamNotifier<T> {
   final Set<void Function()> _doneListeners = <void Function()>{};
   final Set<Function> _errorListeners = <Function>{};
   final Stream<T> _stream;
-  StreamSubscription<T>/*?*/ _subs;
+  StreamSubscription<T>? _subs;
 
   void _ensureInitialized() {
     _subs ??= _stream.listen(
@@ -31,9 +31,9 @@ class StreamNotifier<T> {
   }
 
   void _onStreamDone() => _doneListeners.toList().forEach((fn) => fn());
-  void _onStreamError(Object error, [StackTrace s]) =>
+  void _onStreamError(Object error, [StackTrace? s]) =>
       _errorListeners.toList().forEach((fn) {
-        if (fn is void Function(Object error, [StackTrace s])) {
+        if (fn is void Function(Object error, [StackTrace? s])) {
           return fn(error, s);
         }
         final fun = fn as void Function(Object error);
@@ -41,9 +41,9 @@ class StreamNotifier<T> {
       });
 
   void _addListeners({
-    void Function(T) onValue,
-    void Function() onDone,
-    Function onError,
+    void Function(T)? onValue,
+    void Function()? onDone,
+    Function? onError,
   }) {
     if (onValue != null) {
       _listeners.add(onValue);
@@ -57,9 +57,9 @@ class StreamNotifier<T> {
   }
 
   void _removeListeners({
-    void Function(T) onValue,
-    void Function() onDone,
-    Function onError,
+    void Function(T)? onValue,
+    void Function()? onDone,
+    Function? onError,
   }) {
     if (onValue != null) {
       _listeners.remove(onValue);
@@ -84,8 +84,8 @@ class StreamNotifier<T> {
   /// aren't any other listeners.
   NotifierSubscription<T> listen(
     void Function(T) onValue, {
-    void Function() onDone,
-    void Function(Object) onError,
+    void Function()? onDone,
+    void Function(Object)? onError,
   }) =>
       NotifierSubscription(this)
         .._handler = onValue
@@ -100,8 +100,8 @@ class StreamNotifier<T> {
   /// aren't any other listeners.
   EagerNotifierSubscription<T> eagerListen(
     void Function(Maybe<T>) onValue, {
-    void Function() onDone,
-    void Function(Object) onError,
+    void Function()? onDone,
+    void Function(Object)? onError,
   }) =>
       EagerNotifierSubscription(this)
         .._handler = onValue
@@ -112,8 +112,8 @@ class StreamNotifier<T> {
   /// Add listeners to this stream.
   void addListener(
     void Function(T) onValue, {
-    void Function() onDone,
-    Function onError,
+    void Function()? onDone,
+    Function? onError,
   }) {
     _addListeners(
       onValue: onValue,
@@ -128,14 +128,14 @@ class StreamNotifier<T> {
 
   /// Stop receiving events and notifying listeners.
   Future<void> cancel() async {
-    await _subs.cancel();
+    await _subs!.cancel();
   }
 
   /// Remove listeners from this stream.
   FutureOr<void> removeListener(
     void Function(T) onValue, {
-    void Function() onDone,
-    Function onError,
+    void Function()? onDone,
+    Function? onError,
     bool doNotCancel = false,
   }) {
     final wasEmpty = _isEmpty;
@@ -206,15 +206,15 @@ class EagerNotifierSubscription<T> extends _NotifierSubscriptionBase<Maybe<T>> {
       );
 }
 
-abstract class _NotifierSubscriptionBase<T> implements StreamSubscription<T/*!*/> {
+abstract class _NotifierSubscriptionBase<T> implements StreamSubscription<T> {
   Maybe<T> _queuedEvent = const None();
   bool _isPaused = false;
-  void Function(T)/*?*//*?*/ _handler;
-  void Function() _doneHandler;
-  Function _errorHandler;
+  void Function(T)?/*?*/ _handler;
+  void Function()? _doneHandler;
+  Function? _errorHandler;
 
   @override
-  Future<E> asFuture<E>([E futureValue]) {
+  Future<E> asFuture<E>([E? futureValue]) {
     final completer = Completer<E>();
     onDone(() => completer.complete(futureValue));
     onError(completer.completeError);
@@ -231,7 +231,7 @@ abstract class _NotifierSubscriptionBase<T> implements StreamSubscription<T/*!*/
       _queuedEvent = Just(value);
       return;
     }
-    _handler(value);
+    _handler!(value);
   }
 
   void _onStreamDone() {
@@ -239,11 +239,11 @@ abstract class _NotifierSubscriptionBase<T> implements StreamSubscription<T/*!*/
     _dispose();
   }
 
-  void _onStreamError(Object error, [StackTrace s]) {
-    if (_errorHandler is void Function(Object, [StackTrace/*?*/])) {
+  void _onStreamError(Object error, [StackTrace? s]) {
+    if (_errorHandler is void Function(Object, [StackTrace?])) {
       return _errorHandler?.call(error, s);
     }
-    final fn = _errorHandler as void Function(Object);
+    final fn = _errorHandler as void Function(Object)?;
     return fn?.call(error);
   }
 
@@ -254,16 +254,16 @@ abstract class _NotifierSubscriptionBase<T> implements StreamSubscription<T/*!*/
   bool get isPaused => _isPaused;
 
   @override
-  void onData(void Function(T/*!*/) handleData) => _handler = handleData;
+  void onData(void Function(T)? handleData) => _handler = handleData;
 
   @override
-  void onDone(void Function() handleDone) => _doneHandler = handleDone;
+  void onDone(void Function()? handleDone) => _doneHandler = handleDone;
 
   @override
-  void onError(Function handleError) => _errorHandler = handleError;
+  void onError(Function? handleError) => _errorHandler = handleError;
 
   @override
-  void pause([Future<void> resumeSignal]) {
+  void pause([Future<void>? resumeSignal]) {
     _isPaused = true;
     if (resumeSignal != null) {
       resumeSignal.then((_) => resume());
@@ -281,7 +281,7 @@ abstract class _NotifierSubscriptionBase<T> implements StreamSubscription<T/*!*/
       return;
     }
     queued.visit(
-      just: _handler,
+      just: _handler!,
       none: nothing,
     );
   }

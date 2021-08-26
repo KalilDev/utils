@@ -3,7 +3,7 @@ import 'dart:async';
 extension FutureOrThen<T> on FutureOr<T> {
   Future<R> then<R>(
     FutureOr<R> Function(T) onValue, {
-    Function onError,
+    Function? onError,
   }) =>
       Future.value(this).then(onValue, onError: onError);
 }

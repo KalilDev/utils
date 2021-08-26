@@ -42,10 +42,10 @@ class AnInjectableService with Consumer implements IService {
 
   IRepository get _repository => get();
 
-  String cache;
+  String? cache;
 
   @override
-  Future<String> cachedDownload() async {
+  Future<String?> cachedDownload() async {
     if (cache != null) {
       return cache;
     }
@@ -86,7 +86,7 @@ abstract class IRepository {
 }
 
 abstract class IService {
-  Future<String> cachedDownload();
+  Future<String?> cachedDownload();
   void clearCache();
 }
 
@@ -100,7 +100,7 @@ Future<void> main() async {
   print(treeToString(DependencyTreeNode(consumer)));
   print(treeToString(
     ScopeTreeNode(i.root),
-    (scope) => (scope as ScopeTreeNode).description,
+    (dynamic scope) => (scope as ScopeTreeNode).description,
   ));
   final scoped = i.root.get<IRepository>() as IDebugAnScope;
   scoped.debugOverrideScope(
@@ -121,7 +121,7 @@ Future<void> main() async {
   print(treeToString(DependencyTreeNode(consumer)));
   print(treeToString(
     ScopeTreeNode(i.root),
-    (scope) => (scope as ScopeTreeNode).description,
+    (dynamic scope) => (scope as ScopeTreeNode).description,
   ));
 }
 

@@ -39,21 +39,21 @@ void main() {
       ..add(13);
     final entries = [1, 12, 123, 124, 1245, 125, 13];
     test('encode', () {
-      final r = codec.encode(tree);
+      final Map<String, dynamic> r = codec.encode(tree);
       expect(r['length'], entries.length);
-      expect(r['current'], tree.current.index);
+      expect(r['current'], tree.current!.index);
       expect(r['entries'], entries);
       expect(r['nextIndices'], [6, 5, -1, 4, -1, -1, -1]);
       expect(r['indices'], {
         '0': {
           '1': {
-            '2': {},
+            '2': <String, dynamic>{},
             '3': {
-              '4': {},
+              '4': <String, dynamic>{},
             },
-            '5': {},
+            '5': <String, dynamic>{},
           },
-          '6': {},
+          '6': <String, dynamic>{},
         },
       });
     });
@@ -64,31 +64,31 @@ void main() {
         'entries': [1, 12],
         'nextIndices': [1, -1],
         'indices': {
-          '0': {'1': {}}
+          '0': {'1': <String, dynamic>{}}
         },
       };
-      final r = codec.decode(d);
-      final prev = r.current;
-      expectTail(r.current);
-      expectAltNotLinked(r.current);
-      expect(r.current.entry, 1);
+      final UndoTree<int> r = codec.decode(d);
+      final prev = r.current!;
+      expectTail(r.current!);
+      expectAltNotLinked(r.current!);
+      expect(r.current!.entry, 1);
 
       expect(r.redo(), 12);
 
-      expectLinked(prev, r.current);
-      expectHead(r.current);
-      expectAltNotLinked(r.current);
-      expect(r.current.entry, 12);
+      expectLinked(prev, r.current!);
+      expectHead(r.current!);
+      expectAltNotLinked(r.current!);
+      expect(r.current!.entry, 12);
     });
     test('encode and decode', () {
-      final reencoded = codec.decode(codec.encode(tree));
+      final UndoTree<int> reencoded = codec.decode(codec.encode(tree));
       // kinda silly
       // TODO: better eq
       expect(_treeString(tree), _treeString(reencoded));
     });
   });
   group('UndoHeader', () {
-    UndoHeader<String> root;
+    late UndoHeader<String> root;
     setUp(() => root = UndoHeader<String>('', 0));
     test('append', () {
       final a = root.append('A', 1);
@@ -137,9 +137,9 @@ void main() {
 
       expect(root.nextsIter(), [a]);
 
-      expect(a.nextsIter(), []);
-      expect(b.nextsIter(), []);
-      expect(c.nextsIter(), []);
+      expect(a.nextsIter(), <UndoHeader<String>>[]);
+      expect(b.nextsIter(), <UndoHeader<String>>[]);
+      expect(c.nextsIter(), <UndoHeader<String>>[]);
     });
     test('prevsIter', () {
       final a = root.add('A', 1);

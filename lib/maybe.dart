@@ -18,8 +18,7 @@ extension MaybeIterableTraverse<T> on Iterable<T> {
   /// [None] if either the iterable was empty or the result of every mapping
   /// operation was [None].
   @Deprecated('Use mapMaybe')
-  Maybe<List<U>> traverse<U>(Maybe<U> /*!*/ Function(T) tryMap) =>
-      mapMaybe(tryMap);
+  Maybe<List<U>> traverse<U>(Maybe<U> Function(T) tryMap) => mapMaybe(tryMap);
 
   /// Traverses an iterable trying to map the elements with [tryMap], returning
   /// [None] if either the iterable was empty or the result of every mapping
@@ -72,19 +71,19 @@ extension MaybeApply<U, T> on Maybe<U Function(T)> {
 }
 
 /// Extensions on [Object] for seamless usage with [Maybe<T>].
-extension MaybeObjectWrapping<T> on T/*?*/ {
+extension MaybeObjectWrapping<T> on T {
   /// Wrap [this] into an [Maybe<T>] with [null] representing [None].
-  Maybe<T /*!*/ > get maybe => Maybe.fromNullable<T /*?*/ >(this);
+  Maybe<T> get maybe => Maybe.fromNullable<T>(this);
 
   /// Wrap [this] with an [Just<T>].
   Maybe<T> get just => Just<T>(this);
 
   /// Maybe cast [this] as [T1], returning [None] in case of an invalid cast.
-  Maybe<T1> maybeAs<T1>() => this is T1 ? Just<T1>(this as T1) : None<T1>();
+  Maybe<T1> maybeAs<T1>() => (this is T1 ? Just<T1>(this as T1) : None<T1>());
 }
 
 extension EitherToMaybe<T> on Either<Object, T> {
-  Maybe<T>/*!*/ toMaybe() {
+  Maybe<T> toMaybe() {
     return visit<Maybe<T>>(
       a: (Object _) => None<T>(),
       b: (r) => Just<T>(r),
@@ -117,18 +116,15 @@ abstract class Maybe<T> extends Monad<T> {
   /// Create an [None<T>].
   static Maybe<T> none<T>() => None<T>();
 
-  @override
-  Maybe<T1> identity<T1>() => Maybe.none<T1>();
-
   /// Construct an non nullable [Maybe] from an nullable value, with [null]
   /// representing [None].
-  static Maybe<T /*!*/ > fromNullable<T>(T /*?*/ value) {
-    return value == null ? None<T /*!*/ >() : Just<T /*!*/ >(value);
+  static Maybe<T> fromNullable<T>(T? value) {
+    return value == null ? None<T>() : Just<T>(value);
   }
 
   /// Construct an non nullable [Maybe] from the result of an synchronous
   /// operation, with [null] or [Exception]s representing [None].
-  static Maybe<T /*!*/ > fromOperation<T>(T /*?*/ Function() operation) {
+  static Maybe<T> fromOperation<T>(T? Function() operation) {
     try {
       return Maybe.fromNullable<T>(operation());
     } on Exception {
@@ -138,11 +134,11 @@ abstract class Maybe<T> extends Monad<T> {
 
   /// Construct an nullable [Maybe] from the result of an synchronous operation,
   /// with only [Exception]s representing [None].
-  static Maybe<T /*?*/ > nullableFromOperation<T>(
-    T /*?*/ Function() operation,
+  static Maybe<T?> nullableFromOperation<T>(
+    T? Function() operation,
   ) {
     try {
-      return Just<T>(operation());
+      return Just<T?>(operation());
     } on Exception {
       return None<T>();
     }
@@ -153,8 +149,8 @@ abstract class Maybe<T> extends Monad<T> {
   ///
   /// [Error]s and [Object]s are deliberately not catched. If the user wants to
   /// have behavior attached to these, he should reimplement this function.
-  static Future<Maybe<T /*!*/ >> fromAsyncOperation<T>(
-    Future<T /*?*/ > Function() operation,
+  static Future<Maybe<T>> fromAsyncOperation<T>(
+    Future<T?> Function() operation,
   ) async {
     try {
       return Maybe.fromNullable<T>(await operation());
@@ -168,11 +164,11 @@ abstract class Maybe<T> extends Monad<T> {
   ///
   /// [Error]s and [Object]s are deliberately not catched. If the user wants to
   /// have behavior attached to these, he should reimplement this function.
-  static Future<Maybe<T /*?*/ >> nullableFromAsyncOperation<T>(
-    Future<T /*?*/ > Function() operation,
+  static Future<Maybe<T?>> nullableFromAsyncOperation<T>(
+    Future<T?> Function() operation,
   ) async {
     try {
-      return Just<T>(await operation());
+      return Just<T?>(await operation());
     } on Exception {
       return None<T>();
     }
@@ -200,11 +196,11 @@ abstract class Maybe<T> extends Monad<T> {
   /// In case theres a value, keep it in case the [predicate] is [true],
   /// otherwise return [None].
   @Deprecated('Use where, as it matches the function on Iterable')
-  Maybe<T> filter(bool /*!*/ Function(T) predicate /*!*/) => where(predicate);
+  Maybe<T> filter(bool Function(T) predicate /*!*/) => where(predicate);
 
   /// In case theres a value, keep it in case the [predicate] is [true],
   /// otherwise return [None].
-  Maybe<T> where(bool /*!*/ Function(T) predicate /*!*/) => visit<Maybe<T>>(
+  Maybe<T> where(bool Function(T) predicate /*!*/) => visit<Maybe<T>>(
         just: (v) => predicate(v) ? this : none<T>(),
         none: () => this,
       );
@@ -238,10 +234,10 @@ abstract class Maybe<T> extends Monad<T> {
 
   /// In case there is a value, retrieve it, otherwise return the result of the
   /// [get] callback.
-  T valueOrGet(T Function() /*!*/ get) => visit<T>(just: _identity, none: get);
+  T valueOrGet(T Function() get) => visit<T>(just: _identity, none: get);
 
   /// Apply the visitor callbacks for the respective type if they are present.
-  T1/*!*/ visit<T1>({@required T1 Function(T)/*!*/ just, @required T1 Function() none});
+  T1 visit<T1>({required T1 Function(T) just, required T1 Function() none});
 
   @override
   Maybe<B> lift<A, B>(Maybe<B Function(A)> fn, Maybe<A> a) =>
@@ -271,7 +267,7 @@ abstract class Maybe<T> extends Monad<T> {
 
   /// Convert this [Maybe] to an [List], with [None] being an empty list and
   /// Just being an list that contains just the value.
-  List<T>/*!*/ toList() => visit(
+  List<T> toList() => visit(
         just: (v) => <T>[v],
         none: () => <T>[],
       );
@@ -308,8 +304,9 @@ class Just<T> extends Maybe<T> {
   }
 
   @override
-  T1/*!*/ visit<T1>({T1 Function(T p1)/*!*/ just, T1 Function()/*!*/ none}) =>
-      just?.call(_value);
+  T1 visit<T1>(
+          {required T1 Function(T p1) just, required T1 Function() none}) =>
+      just.call(_value);
 }
 
 /// An [Maybe] type that represents the abscence of an value.
@@ -328,5 +325,7 @@ class None<T> extends Maybe<T> {
   bool operator ==(dynamic other) => other is None<T>;
 
   @override
-  T1/*!*/ visit<T1>({T1 Function(T p1)/*!*/ just, T1 Function()/*!*/ none}) => none?.call();
+  T1 visit<T1>(
+          {required T1 Function(T p1) just, required T1 Function() none}) =>
+      none.call();
 }

@@ -4,7 +4,7 @@ import 'maybe.dart';
 import 'type.dart';
 
 T _identity<T>(T v) => v;
-T _notNull<T>(T /*?*/ v) => ArgumentError.checkNotNull(v);
+T _notNull<T>(T? v) => ArgumentError.checkNotNull(v);
 
 /// An [Monad<B>] which contains either an [Left<A>] value or an [Right<B>]
 /// value and performs the [bind] and [fmap] on the [Right] value.
@@ -41,7 +41,7 @@ abstract class Either<A, B> extends Monad<B> implements BiFunctor<A, B> {
   static Either<A, B> right<A, B>(B value) => Right(value);
 
   @override
-  Either<A, T> identity<T>() => left<A, T>(null);
+  Either<A?, T> identity<T>() => left<A?, T>(null);
 
   @override
   Either<A, T> unit<T>(T value) => right<A, T>(value);
@@ -56,8 +56,8 @@ abstract class Either<A, B> extends Monad<B> implements BiFunctor<A, B> {
 
   @override
   Either<A1, B1> bimap<A1, B1>({
-    A1 Function(A)/*!*/ a,
-    B1 Function(B)/*!*/ b,
+    required A1 Function(A) a,
+    required B1 Function(B) b,
   }) =>
       visit<Either<A1, B1>>(
         a: (v) => Either.left<A1, B1>(a(v)),
@@ -79,13 +79,13 @@ abstract class Either<A, B> extends Monad<B> implements BiFunctor<A, B> {
       );
 
   /// Handle the right value with [right] and return the left [A] value.
-  A/*!*/ getL(A Function(B) right) => visit(a: _identity, b: right);
+  A getL(A Function(B) right) => visit(a: _identity, b: right);
 
   /// Handle the left value with [left] and return the right [B] value.
-  B/*!*/ getR(B Function(A) left) => visit(a: left, b: _identity);
+  B getR(B Function(A) left) => visit(a: left, b: _identity);
 
   /// Run the correct callback in case of left or right.
-  T/*!*/ visit<T>({T Function(A)/*!*/ a, T Function(B)/*!*/ b});
+  T visit<T>({required T Function(A) a, required T Function(B) b});
 
   /// [Maybe] return the [Left] value, returning [None] in case [this] is
   /// [Right]
@@ -117,12 +117,12 @@ abstract class Either<A, B> extends Monad<B> implements BiFunctor<A, B> {
 }
 
 extension MaybeToEither<T> on Maybe<T> {
-  Either<L/*!*/, T> toEither<L>({L l, L/*!*/ Function() get}) {
+  Either<L, T> toEither<L>({L? l, L Function()? get}) {
     assert((l != null) ^ (get != null));
-    get ??= () => l;
+    get ??= () => l!;
     return visit<Either<L, T>>(
       just: (v) => Right<L, T>(v),
-      none: () => Left<L, T>(get()),
+      none: () => Left<L, T>(get!()),
     );
   }
 }
@@ -134,7 +134,8 @@ class Left<A, B> extends Either<A, B> {
   final A _value;
 
   @override
-  T visit<T>({T Function(A p1)/*!*/ a, T Function(B p1)/*!*/ b}) => a?.call(_value);
+  T visit<T>({required T Function(A p1) a, required T Function(B p1) b}) =>
+      a.call(_value);
 }
 
 /// The right [B] value in an [Either] type.
@@ -144,7 +145,8 @@ class Right<A, B> extends Either<A, B> {
   final B _value;
 
   @override
-  T visit<T>({T Function(A p1)/*!*/ a, T Function(B)/*!*/ b}) => b?.call(_value);
+  T visit<T>({required T Function(A p1) a, required T Function(B) b}) =>
+      b.call(_value);
 }
 
 /// Utils for extracting [Either] values from an [Iterable]
@@ -163,8 +165,8 @@ extension EitherIterableUtils<A, B> on Iterable<Either<A, B>> {
         [<A>[], <B>[]],
         (r, either) {
           either.visit(
-            a: (r.first as List<A/*!*/>).add,
-            b: (r.last as List<B/*!*/>).add,
+            a: (r.first as List<A>).add,
+            b: (r.last as List<B>).add,
           );
           return r;
         },

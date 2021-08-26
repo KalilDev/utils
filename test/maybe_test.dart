@@ -4,7 +4,7 @@ import 'package:test/test.dart';
 extension _MaybeTest<T> on Maybe<T> {
   T get value => visit(
         just: (v) => v,
-        none: () => fail('should be Just<$T>'),
+        none: (() => fail('should be Just<$T>')) as T Function(),
       );
 }
 
@@ -15,14 +15,14 @@ void main() {
     group('MaybeObjectWrapping', () {
       test('maybe', () {
         // ignore: unnecessary_cast
-        final maybeNullInt = (null as int).maybe;
+        final maybeNullInt = (null as int?).maybe;
         final maybeOne = 1.maybe;
         expect(maybeNullInt, isA<None<int>>());
         expect(maybeOne.value, 1);
       });
       test('just', () {
         // ignore: unnecessary_cast
-        final justNullInt = (null as int).just;
+        final justNullInt = (null as int?).just;
         final justOne = 1.just;
         expect(justNullInt.value, null);
         expect(justOne.value, 1);
@@ -34,14 +34,12 @@ void main() {
         const justOne = Just<int>(1);
         expect([none].cataMaybes(), isEmpty);
         expect([none, none].cataMaybes(), isEmpty);
-        expect([justOne].cataMaybes(), Iterable.castFrom([1]));
-        expect(
-            [justOne, none, justOne].cataMaybes(), Iterable.castFrom([1, 1]));
+        expect([justOne].cataMaybes(), Iterable.castFrom<int, int>([1]));
+        expect([justOne, none, justOne].cataMaybes(),
+            Iterable.castFrom<int, int>([1, 1]));
       });
     });
     group('MaybeListTraverse', () {
-      Maybe<int> indexGreaterThanOne(int v, [int i]) =>
-          i > 1 ? Just<int>(v) : const None<int>();
       final emptyList = <int>[];
       final list = <int>[0, 1, 2, 1];
       test('traverse', () {
@@ -50,16 +48,8 @@ void main() {
           isA<None<List<int>>>(),
         );
         expect(
-          emptyList.traverse(indexGreaterThanOne),
-          isA<None<List<int>>>(),
-        );
-        expect(
           list.traverse(greaterThanOne).value,
           [2],
-        );
-        expect(
-          list.traverse(indexGreaterThanOne).value,
-          [2, 1],
         );
       });
     });
@@ -129,7 +119,7 @@ void main() {
     });
     test('just', () {
       expect(Maybe.just<int>(1), isA<Just<int>>());
-      expect(Maybe.just<int>(null), isA<Just<int>>());
+      expect(Maybe.just<int?>(null), isA<Just<int>>());
     });
     test('none', () {
       expect(Maybe.none<int>(), isA<None<int>>());
@@ -140,12 +130,6 @@ void main() {
       const one = Just<int>(1);
       expect(none.unit<double>(2).value, 2.0);
       expect(one.unit<double>(2).value, 2.0);
-    });
-    test('identity', () {
-      const none = None<int>();
-      const one = Just<int>(1);
-      expect(none.identity<double>(), isA<None<double>>());
-      expect(one.identity<double>(), isA<None<double>>());
     });
     test('fromOperation', () {
       expect(Maybe.fromOperation<int>(() => 1), isA<Just<int>>());
@@ -218,7 +202,7 @@ void main() {
     test('filterNonNullable', () {
       const noneInt = None<int>();
       const justOne = Just<int>(1);
-      const justNull = Just<int>(null);
+      const justNull = Just<int?>(null);
       expect(noneInt.filterNonNullable(), isA<None<int>>());
       expect(justOne.filterNonNullable(), isA<Just<int>>());
       expect(justNull.filterNonNullable(), isA<None<int>>());
@@ -251,13 +235,16 @@ void main() {
       const noneInt = None<int>();
       const justOne = Just<int>(1);
       expect(
-        noneInt.visit<double>(just: (_) => fail('Not just'), none: () => 2.0),
+        noneInt.visit<double>(
+            just: ((dynamic _) => fail('Not just')) as double Function(int),
+            none: () => 2.0),
         2.0,
       );
 
       expect(
         justOne.visit<double>(
-            none: () => fail('Not none'), just: (i) => 3.0 * i),
+            none: (() => fail('Not none')) as double Function(),
+            just: (i) => 3.0 * i),
         3.0,
       );
     });
