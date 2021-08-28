@@ -114,9 +114,9 @@ extension IterableE<T> on Iterable<T> {
   @pragma('vm:prefer-inline')
   Iterable<T1> bind<T1>(Iterable<T1> Function(T) fn) => expand(fn);
   Iterable<Tuple<T, T1>> zip<T1>(Iterable<T1> other) sync* {
-    final ia = iterator, ib = other.iterator as Iterator<T>;
+    final ia = iterator, ib = other.iterator;
     while (ia.moveNext() && ib.moveNext()) {
-      yield Tuple(ia.current, ib.current as T1);
+      yield Tuple(ia.current, ib.current);
     }
   }
 
