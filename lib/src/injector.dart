@@ -54,7 +54,7 @@ mixin InjectableProxy implements IAmAnDependencyTreeNode, IScopeProxy {
   @override
   bool _didInject(InjectorScopeImpl scope) =>
       _scope == scope ||
-      (this is ICreateAnScope && _scope.just == scope._parent);
+      (this is ICreateAnScope && _scope?.just == scope._parent);
 
   @override
   void debugOverrideScope(
@@ -128,7 +128,7 @@ mixin Consumer implements IInjectDependencies, IScopeProxy {
   @override
   bool _didInject(InjectorScopeImpl scope) =>
       _scope == scope ||
-      (this is ICreateAnScope && _scope.just == scope._parent);
+      (this is ICreateAnScope && _scope?.just == scope._parent);
 
   @override
   void debugOverrideScope(

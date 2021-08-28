@@ -71,9 +71,9 @@ class UndoTreeDecoder<E> extends Converter<Map<String, dynamic>, UndoTree<E>> {
     if (entries.length != length || nextIndices.length != length) {
       throw const FormatException();
     }
-    final result = UndoTree<E>()
-      .._length = length
-      .._headerList.length = length;
+    // Use this list instead of the one in the [UndoTree] because it is not
+    // nullable, therefore setting the length would be invalid;
+    final headerList = List<UndoHeader<E>?>.filled(length, null);
 
     /// Create the headers, by walking the [indices] and adding the respective
     /// entry.
@@ -81,7 +81,7 @@ class UndoTreeDecoder<E> extends Converter<Map<String, dynamic>, UndoTree<E>> {
       indices,
       entries,
       (e, i) => UndoHeader<E>(e, i), // Create an root node
-      (e) => result._headerList[e.index] = e,
+      (e) => headerList[e.index] = e,
     );
 
     /// Point every header to the correct next header
@@ -90,15 +90,19 @@ class UndoTreeDecoder<E> extends Converter<Map<String, dynamic>, UndoTree<E>> {
       if (nextI == -1) {
         continue;
       }
-      result._headerList[i].next = result._headerList[nextI];
+      headerList[i]!.next = headerList[nextI];
     }
 
+    final result = UndoTree<E>().._length = length;
+
     if (current != null) {
-      result._current = result._headerList[current];
+      result._current = headerList[current];
     }
     result._current ??= root;
     result._tail = result.current!.tail();
     result._head = result.current!.head();
+
+    result._headerList.addAll(headerList.cast());
 
     return result;
   }

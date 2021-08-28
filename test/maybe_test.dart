@@ -16,15 +16,21 @@ void main() {
       test('maybe', () {
         // ignore: unnecessary_cast
         final maybeNullInt = (null as int?).maybe;
-        final maybeOne = 1.maybe;
+        final maybeInt = 1.maybe;
         expect(maybeNullInt, isA<None<int>>());
-        expect(maybeOne.value, 1);
+        expect(maybeInt, isA<Just<int>>());
+        expect(maybeInt.value, 1);
       });
       test('just', () {
         // ignore: unnecessary_cast
         final justNullInt = (null as int?).just;
+        final justNullableInt = (1 as int?).just;
         final justOne = 1.just;
+        expect(justNullInt, isA<Just<int?>>());
         expect(justNullInt.value, null);
+        expect(justNullableInt, isA<Just<int?>>());
+        expect(justNullableInt.value, 1);
+        expect(justOne, isA<Just<int>>());
         expect(justOne.value, 1);
       });
     });
@@ -119,7 +125,7 @@ void main() {
     });
     test('just', () {
       expect(Maybe.just<int>(1), isA<Just<int>>());
-      expect(Maybe.just<int?>(null), isA<Just<int>>());
+      expect(Maybe.just<int?>(null), isA<Just<int?>>());
     });
     test('none', () {
       expect(Maybe.none<int>(), isA<None<int>>());
@@ -139,8 +145,8 @@ void main() {
       expect(() => Maybe.fromOperation<int>(() => throw ''), throwsA(anything));
     });
     test('nullableFromOperation', () {
-      expect(Maybe.nullableFromOperation<int>(() => 1), isA<Just<int>>());
-      expect(Maybe.nullableFromOperation<int>(() => null), isA<Just<int>>());
+      expect(Maybe.nullableFromOperation<int>(() => 1), isA<Just<int?>>());
+      expect(Maybe.nullableFromOperation<int>(() => null), isA<Just<int?>>());
       expect(Maybe.nullableFromOperation<int>(() => throw Exception()),
           isA<None<int>>());
       expect(() => Maybe.nullableFromOperation<int>(() => throw ''),
@@ -158,9 +164,9 @@ void main() {
     });
     test('nullableFromAsyncOperation', () async {
       expect(await Maybe.nullableFromAsyncOperation<int>(() async => 1),
-          isA<Just<int>>());
+          isA<Just<int?>>());
       expect(await Maybe.nullableFromAsyncOperation<int>(() async => null),
-          isA<Just<int>>());
+          isA<Just<int?>>());
       expect(
           await Maybe.nullableFromAsyncOperation<int>(
               () async => throw Exception()),
@@ -193,7 +199,9 @@ void main() {
       expect(justOne.where(notTwo).value, 1);
       expect(justTwo.where(notTwo), isA<None<int>>());
     });
-    test('whereNotNull/filterrNonNullable', () {
+    test(
+        'whereNotNull/filterNonNullable (Moved to extensions with NNBD so the api isnt broken)',
+        () {
       const noneInt = None<int>();
       const justOne = Just<int>(1);
       const justNull = Just<int?>(null);

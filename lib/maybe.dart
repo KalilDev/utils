@@ -70,9 +70,50 @@ extension MaybeApply<U, T> on Maybe<U Function(T)> {
   Maybe<U> operator >>(Maybe<T> arg) => apply(arg);
 }
 
-/// Extensions on [Object] for seamless usage with [Maybe<T>].
-extension MaybeObjectWrapping<T> on T {
+// Extension for Maybe of nullable types
+extension MaybeNullableE<T extends Object> on Maybe<T?> {
+  /// In case theres a value, keep it only if it is not [null], otherwise
+  /// return [None].
+  Maybe<T> whereNotNull() => where((e) => e != null).cast();
+
+  /// In case theres a value, keep it only if it is not [null], otherwise
+  /// return [None].
+  @Deprecated('Use whereNotNull, as it has an better name')
+  Maybe<T> filterNonNullable() => whereNotNull();
+}
+
+// Extension for Maybe of non nullable types
+extension MaybeNonNullableE<T extends Object> on Maybe<T> {
+  /// Transforms [null] into [None]
+
+  /// In case theres a value, keep it only if it is not [null], otherwise
+  /// return [None].
+  @Deprecated('Deprecated for non nullable types!')
+  Maybe<T> whereNotNull() => this;
+
+  /// In case theres a value, keep it only if it is not [null], otherwise
+  /// return [None].
+  @Deprecated('Use whereNotNull, as it has an better name')
+  @Deprecated('Deprecated for non nullable types!')
+  Maybe<T> filterNonNullable() => this;
+}
+
+// Extension for nullable types
+extension MaybeNullableWrapping<T extends Object> on T? {
   /// Wrap [this] into an [Maybe<T>] with [null] representing [None].
+  Maybe<T> get maybe => Maybe.fromNullable<T>(this);
+
+  /// Wrap [this] with an [Just<T>].
+  Maybe<T?> get just => Just<T?>(this);
+
+  /// Maybe cast [this] as [T1], returning [None] in case of an invalid cast.
+  Maybe<T1> maybeAs<T1>() => this is T1 ? Just<T1>(this as T1) : None<T1>();
+}
+
+// Extension for non nullable types
+extension MaybeNonNullWrapping<T extends Object> on T {
+  /// Wrap [this] into an [Maybe<T>] with [null] representing [None].
+  @Deprecated('Deprecated for non nullable types! use just instead')
   Maybe<T> get maybe => Maybe.fromNullable<T>(this);
 
   /// Wrap [this] with an [Just<T>].
@@ -81,6 +122,14 @@ extension MaybeObjectWrapping<T> on T {
   /// Maybe cast [this] as [T1], returning [None] in case of an invalid cast.
   Maybe<T1> maybeAs<T1>() => this is T1 ? Just<T1>(this as T1) : None<T1>();
 }
+
+// Extension for nullable and non nullable types
+extension MaybeNullabeWrapping<T extends Object> on T? {
+  /// Maybe cast [this] as [T1], returning [None] in case of an invalid cast.
+  Maybe<T1> maybeAs<T1>() => this is T1 ? Just<T1>(this as T1) : None<T1>();
+}
+
+extension MaybeObjectWrapping<T extends Object> on T? {}
 
 extension EitherToMaybe<T> on Either<Object, T> {
   Maybe<T> toMaybe() {
@@ -204,15 +253,6 @@ abstract class Maybe<T> extends Monad<T> {
         just: (v) => predicate(v) ? this : none<T>(),
         none: () => this,
       );
-
-  /// In case theres a value, keep it only if it is not [null], otherwise
-  /// return [None].
-  @Deprecated('Use whereNotNull, as it has an better name')
-  Maybe<T> filterNonNullable() => whereNotNull();
-
-  /// In case theres a value, keep it only if it is not [null], otherwise
-  /// return [None].
-  Maybe<T> whereNotNull() => where((v) => v != null);
 
   /// In case this is [None], add the [value], resulting in a [Just], otherwise
   /// keep the current value.

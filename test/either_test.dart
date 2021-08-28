@@ -17,15 +17,6 @@ void main() {
       expect(left.unit<String>(''), isA<Right<int, String>>());
       expect(right.unit<String>(''), isA<Right<int, String>>());
     });
-    test('fromComputation lazy', () {
-      expect(Either.fromComputation(_fail), isA<Either>());
-      expect(
-          Either.fromComputation(() => throw Exception()), isNot(isA<Left>()));
-      expect(Either.fromComputation(() => throw Exception()).getL(_fail),
-          isA<Exception>());
-      expect(Either.fromComputation(() => 'Hello'), isNot(isA<Right>()));
-      expect(Either.fromComputation(() => 'Hello').getR(_fail), 'Hello');
-    });
     test('fromComputation', () {
       expect(Either.fromComputation(() => throw Exception()), isA<Left>());
       expect(Either.fromComputation(() => throw Exception()).getL(_fail),
