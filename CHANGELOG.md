@@ -1,3 +1,9 @@
+## 2.0.0-nullsafety.0
+- Migrate to null safety
+- Remove the deprecated utils.pattern library
+- Deprecate some methods that do not make sense for non nullablle types
+- Introduce an new, faster Undotree codec
+
 ## 1.2.0
 
 - Include utils.event_sourcing and utils.event_sourcing.data
