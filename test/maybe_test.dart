@@ -1,3 +1,5 @@
+// ignore_for_file: unnecessary_cast, deprecated_member_use_from_same_package
+
 import 'package:test/test.dart';
 import 'package:utils/utils.dart';
 
@@ -14,7 +16,6 @@ void main() {
         i > 1 ? Just<int>(i) : const None<int>();
     group('MaybeObjectWrapping', () {
       test('maybe', () {
-        // ignore: unnecessary_cast
         final maybeNullInt = (null as int?).maybe;
         final maybeInt = 1.maybe;
         expect(maybeNullInt, isA<None<int>>());
@@ -22,7 +23,6 @@ void main() {
         expect(maybeInt.value, 1);
       });
       test('just', () {
-        // ignore: unnecessary_cast
         final justNullInt = (null as int?).just;
         final justNullableInt = (1 as int?).just;
         final justOne = 1.just;

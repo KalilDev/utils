@@ -134,9 +134,9 @@ class UndoTreeDecoder<E> extends Converter<Map<String, dynamic>, UndoTree<E>> {
       throw const FormatException();
     }
 
-    /// Walk every index-children pair in [adjacentIndices], create an [localRoot]
-    /// by using [appendToPrevious] on the first pair, and then walk every
-    /// children in the pair with [child.append] as the [appendToPrevious]
+    /// Walk every index-children pair in [adjacentIndices], create an
+    /// [localRoot] by using [appendToPrevious] on the first pair, and then walk
+    /// every children in the pair with [child.append] as the [appendToPrevious]
     /// argument.
     UndoHeader<E>? _recursiveWalkAdjacent(
       Map<String, dynamic> adjacentIndices,

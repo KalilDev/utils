@@ -39,7 +39,7 @@ void main() {
       ..add(13);
     final entries = [1, 12, 123, 124, 1245, 125, 13];
     group('V0', () {
-      final v0Encoder = UndoTreeEncoder<int>(0);
+      const v0Encoder = UndoTreeEncoder<int>(0);
       test('encode', () {
         final Map<String, dynamic> r = v0Encoder.convert(tree);
         expect(r['length'], entries.length);
@@ -92,7 +92,8 @@ void main() {
     });
 
     group('V1', () {
-      final v1Encoder = UndoTreeEncoder<int>(1);
+      // ignore: avoid_redundant_argument_values
+      const v1Encoder = UndoTreeEncoder<int>(1);
       test('encode', () {
         final Map<String, dynamic> r = v1Encoder.convert(tree);
         expect(r['length'], entries.length);
