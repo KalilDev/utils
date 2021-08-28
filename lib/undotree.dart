@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:meta/meta.dart';
 
+import 'extensions.dart';
 import 'graph.dart';
 import 'maybe.dart';
 

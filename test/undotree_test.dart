@@ -13,7 +13,7 @@ String _treeString<T>(UndoTree<T> tree) => treeToString<UndoTreeNode<T>>(
 void main() {
   group('UndoTree', () {});
   group('UndoTreeCodec', () {
-    final codec = UndoTreeCodec<int>();
+    final decoder = UndoTreeCodec<int>().decoder;
     final tree = UndoTree<int>();
 
     /// root
@@ -38,53 +38,110 @@ void main() {
       ..undo()
       ..add(13);
     final entries = [1, 12, 123, 124, 1245, 125, 13];
-    test('encode', () {
-      final Map<String, dynamic> r = codec.encode(tree);
-      expect(r['length'], entries.length);
-      expect(r['current'], tree.current!.index);
-      expect(r['entries'], entries);
-      expect(r['nextIndices'], [6, 5, -1, 4, -1, -1, -1]);
-      expect(r['indices'], {
-        '0': {
-          '1': {
-            '2': <String, dynamic>{},
-            '3': {
-              '4': <String, dynamic>{},
+    group('V0', () {
+      final v0Encoder = UndoTreeEncoder<int>(0);
+      test('encode', () {
+        final Map<String, dynamic> r = v0Encoder.convert(tree);
+        expect(r['length'], entries.length);
+        expect(r['current'], tree.current!.index);
+        expect(r['entries'], entries);
+        expect(r['nextIndices'], [6, 5, -1, 4, -1, -1, -1]);
+        expect(r['indices'], {
+          '0': {
+            '1': {
+              '2': <String, dynamic>{},
+              '3': {
+                '4': <String, dynamic>{},
+              },
+              '5': <String, dynamic>{},
             },
-            '5': <String, dynamic>{},
+            '6': <String, dynamic>{},
           },
-          '6': <String, dynamic>{},
-        },
+        });
+      });
+      test('decode', () {
+        final d = {
+          'length': 2,
+          'current': 0,
+          'entries': [1, 12],
+          'nextIndices': [1, -1],
+          'indices': {
+            '0': {'1': <String, dynamic>{}}
+          },
+        };
+        final UndoTree<int> r = decoder.convert(d);
+        final prev = r.current!;
+        expectTail(r.current!);
+        expectAltNotLinked(r.current!);
+        expect(r.current!.entry, 1);
+
+        expect(r.redo(), 12);
+
+        expectLinked(prev, r.current!);
+        expectHead(r.current!);
+        expectAltNotLinked(r.current!);
+        expect(r.current!.entry, 12);
+      });
+      test('encode and decode', () {
+        final UndoTree<int> reencoded =
+            decoder.convert(v0Encoder.convert(tree));
+        // kinda silly
+        // TODO: better eq
+        expect(_treeString(tree), _treeString(reencoded));
       });
     });
-    test('decode', () {
-      final d = {
-        'length': 2,
-        'current': 0,
-        'entries': [1, 12],
-        'nextIndices': [1, -1],
-        'indices': {
-          '0': {'1': <String, dynamic>{}}
-        },
-      };
-      final UndoTree<int> r = codec.decode(d);
-      final prev = r.current!;
-      expectTail(r.current!);
-      expectAltNotLinked(r.current!);
-      expect(r.current!.entry, 1);
 
-      expect(r.redo(), 12);
+    group('V1', () {
+      final v1Encoder = UndoTreeEncoder<int>(1);
+      test('encode', () {
+        final Map<String, dynamic> r = v1Encoder.convert(tree);
+        expect(r['length'], entries.length);
+        expect(r['current'], tree.current!.index);
+        expect(r['head'], tree.head!.index);
+        expect(r['entries'], entries);
+        expect(r['codecVersion'], 1);
+        expect(r['edges'], [
+          [null, 6, null, null],
+          [0, 5, null, 6],
+          [1, null, null, 3],
+          [1, 4, 2, 5],
+          [3, null, null, null],
+          [1, null, 3, null],
+          [0, null, 1, null],
+        ]);
+      });
+      test('decode', () {
+        final d = {
+          'length': 2,
+          'current': 0,
+          'head': 1,
+          'entries': [1, 12],
+          'edges': [
+            [null, 1, null, null],
+            [0, null, null, null],
+          ],
+          'codecVersion': 1,
+        };
+        final UndoTree<int> r = decoder.convert(d);
+        final prev = r.current!;
+        expectTail(r.current!);
+        expectAltNotLinked(r.current!);
+        expect(r.current!.entry, 1);
 
-      expectLinked(prev, r.current!);
-      expectHead(r.current!);
-      expectAltNotLinked(r.current!);
-      expect(r.current!.entry, 12);
-    });
-    test('encode and decode', () {
-      final UndoTree<int> reencoded = codec.decode(codec.encode(tree));
-      // kinda silly
-      // TODO: better eq
-      expect(_treeString(tree), _treeString(reencoded));
+        expect(r.redo(), 12);
+
+        expectLinked(prev, r.current!);
+        expectHead(r.current!);
+        expectAltNotLinked(r.current!);
+        expect(r.current!.entry, 12);
+      });
+      test('encode and decode', () {
+        final UndoTree<int> reencoded =
+            decoder.convert(v1Encoder.convert(tree));
+        // kinda silly
+        // TODO: better eq
+        expect(_treeString(tree), _treeString(reencoded));
+      });
     });
   });
   group('UndoHeader', () {
