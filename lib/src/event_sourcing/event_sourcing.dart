@@ -39,9 +39,10 @@ abstract class EventSourcedSnapshotBuilder<
     B extends EventSourcedSnapshotBuilder<S, B, E>,
     E extends EventSourcedEvent<S, B, E>> {
   // ignore: public_member_api_docs
-  void replace(EventSourcedSnapshot<S, B, E> other);
+  void replace(covariant EventSourcedSnapshot<S, B, E> other);
   // ignore: public_member_api_docs
-  void update(void Function(EventSourcedSnapshotBuilder<S, B, E>) updates);
+  void update(
+      covariant void Function(EventSourcedSnapshotBuilder<S, B, E>) updates);
   // ignore: public_member_api_docs
   S build();
 }
