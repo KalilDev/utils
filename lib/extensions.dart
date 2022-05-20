@@ -120,6 +120,16 @@ extension IterableE<T> on Iterable<T> {
     }
   }
 
+  static bool _or(bool a, bool b) => a || b;
+
+  Iterable<Tuple<T?, T1?>> zipAll<T1>(Iterable<T1> other) sync* {
+    final ia = iterator, ib = other.iterator;
+    bool hasA, hasB;
+    while (_or(hasA = ia.moveNext(), hasB = ib.moveNext())) {
+      yield Tuple(hasA ? ia.current : null, hasB ? ib.current : null);
+    }
+  }
+
   Iterable<Tuple<int, T>> get indexed sync* {
     var i = 0;
     final it = iterator;
