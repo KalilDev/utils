@@ -1,5 +1,7 @@
 import 'package:collection/collection.dart';
 
+export 'tuple.dart';
+
 /// An monoid in the Category of Endofunctors. An abstraction that allows
 /// structuring programs generically.
 ///
@@ -41,28 +43,6 @@ abstract class Monad<A> implements Applicative<A> {
   @override
   Monad<B> lift<A1, B>(Monad<B Function(A1)> fn, Monad<A1> a);
 }
-
-T _identity<T>(T v) => v;
-
-class Tuple<A, B> implements BiFunctor<A, B> {
-  const Tuple(this.left, this.right);
-  final A left;
-  final B right;
-
-  @override
-  Tuple<A1, B1> bimap<A1, B1>(
-          {required A1 Function(A) a, required B1 Function(B) b}) =>
-      Tuple(a(left), b(right));
-
-  @override
-  BiFunctor<A1, B> first<A1>(A1 Function(A) fn) => bimap(a: fn, b: _identity);
-
-  @override
-  BiFunctor<A, B1> second<B1>(B1 Function(B p1) fn) =>
-      bimap(a: _identity, b: fn);
-  T visit<T>(T Function(A, B) fn) => fn(left, right);
-}
-
 
 /// An base class for classes which that represent an sum ( | ) or
 /// product ( * ) type.
