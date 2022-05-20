@@ -12,7 +12,7 @@ dependencies:
   adt_annotation:
 
 dev_dependencies:
-  adt_generator:
+  adt_generator: ^1.2.2
   build_runner:
   demostudo_lint: ^1.0.0
   test: ^1.14.4

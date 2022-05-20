@@ -6,8 +6,10 @@ part of 'tuple.dart';
 // AdtGenerator
 // **************************************************************************
 
-class Tuple0 with TupleN0 implements ProductType {
+class Tuple0 with TupleN0 implements ProductType, TupleN0 {
   const Tuple0() : super();
+
+  factory Tuple0.fromTupleN(TupleN0 tpl) => Tuple0();
 
   @override
   ProductRuntimeType get runtimeType => ProductRuntimeType([]);
@@ -22,10 +24,14 @@ class Tuple0 with TupleN0 implements ProductType {
   String toString() => "Tuple0 ()";
 }
 
-class Tuple1<E0 extends Object?> with TupleN1<E0> implements ProductType {
+class Tuple1<E0 extends Object?>
+    with TupleN1<E0>
+    implements ProductType, TupleN1<E0> {
   final E0 e0;
 
   const Tuple1(this.e0) : super();
+
+  factory Tuple1.fromTupleN(TupleN1<E0> tpl) => Tuple1(tpl.e0);
 
   @override
   ProductRuntimeType get runtimeType => ProductRuntimeType([E0]);
@@ -43,11 +49,13 @@ class Tuple1<E0 extends Object?> with TupleN1<E0> implements ProductType {
 
 class Tuple2<E0 extends Object?, E1 extends Object?>
     with TupleN2<E0, E1>
-    implements ProductType {
+    implements ProductType, TupleN2<E0, E1> {
   final E0 e0;
   final E1 e1;
 
   const Tuple2(this.e0, this.e1) : super();
+
+  factory Tuple2.fromTupleN(TupleN2<E0, E1> tpl) => Tuple2(tpl.e0, tpl.e1);
 
   @override
   ProductRuntimeType get runtimeType => ProductRuntimeType([E0, E1]);
@@ -68,12 +76,15 @@ class Tuple2<E0 extends Object?, E1 extends Object?>
 
 class Tuple3<E0 extends Object?, E1 extends Object?, E2 extends Object?>
     with TupleN3<E0, E1, E2>
-    implements ProductType {
+    implements ProductType, TupleN3<E0, E1, E2> {
   final E0 e0;
   final E1 e1;
   final E2 e2;
 
   const Tuple3(this.e0, this.e1, this.e2) : super();
+
+  factory Tuple3.fromTupleN(TupleN3<E0, E1, E2> tpl) =>
+      Tuple3(tpl.e0, tpl.e1, tpl.e2);
 
   @override
   ProductRuntimeType get runtimeType => ProductRuntimeType([E0, E1, E2]);
@@ -94,13 +105,18 @@ class Tuple3<E0 extends Object?, E1 extends Object?, E2 extends Object?>
 }
 
 class Tuple4<E0 extends Object?, E1 extends Object?, E2 extends Object?,
-    E3 extends Object?> with TupleN4<E0, E1, E2, E3> implements ProductType {
+        E3 extends Object?>
+    with TupleN4<E0, E1, E2, E3>
+    implements ProductType, TupleN4<E0, E1, E2, E3> {
   final E0 e0;
   final E1 e1;
   final E2 e2;
   final E3 e3;
 
   const Tuple4(this.e0, this.e1, this.e2, this.e3) : super();
+
+  factory Tuple4.fromTupleN(TupleN4<E0, E1, E2, E3> tpl) =>
+      Tuple4(tpl.e0, tpl.e1, tpl.e2, tpl.e3);
 
   @override
   ProductRuntimeType get runtimeType => ProductRuntimeType([E0, E1, E2, E3]);
@@ -124,7 +140,7 @@ class Tuple4<E0 extends Object?, E1 extends Object?, E2 extends Object?,
 class Tuple5<E0 extends Object?, E1 extends Object?, E2 extends Object?,
         E3 extends Object?, E4 extends Object?>
     with TupleN5<E0, E1, E2, E3, E4>
-    implements ProductType {
+    implements ProductType, TupleN5<E0, E1, E2, E3, E4> {
   final E0 e0;
   final E1 e1;
   final E2 e2;
@@ -132,6 +148,9 @@ class Tuple5<E0 extends Object?, E1 extends Object?, E2 extends Object?,
   final E4 e4;
 
   const Tuple5(this.e0, this.e1, this.e2, this.e3, this.e4) : super();
+
+  factory Tuple5.fromTupleN(TupleN5<E0, E1, E2, E3, E4> tpl) =>
+      Tuple5(tpl.e0, tpl.e1, tpl.e2, tpl.e3, tpl.e4);
 
   @override
   ProductRuntimeType get runtimeType =>
@@ -158,7 +177,7 @@ class Tuple5<E0 extends Object?, E1 extends Object?, E2 extends Object?,
 class Tuple6<E0 extends Object?, E1 extends Object?, E2 extends Object?,
         E3 extends Object?, E4 extends Object?, E5 extends Object?>
     with TupleN6<E0, E1, E2, E3, E4, E5>
-    implements ProductType {
+    implements ProductType, TupleN6<E0, E1, E2, E3, E4, E5> {
   final E0 e0;
   final E1 e1;
   final E2 e2;
@@ -167,6 +186,9 @@ class Tuple6<E0 extends Object?, E1 extends Object?, E2 extends Object?,
   final E5 e5;
 
   const Tuple6(this.e0, this.e1, this.e2, this.e3, this.e4, this.e5) : super();
+
+  factory Tuple6.fromTupleN(TupleN6<E0, E1, E2, E3, E4, E5> tpl) =>
+      Tuple6(tpl.e0, tpl.e1, tpl.e2, tpl.e3, tpl.e4, tpl.e5);
 
   @override
   ProductRuntimeType get runtimeType =>
@@ -201,7 +223,7 @@ class Tuple7<
         E5 extends Object?,
         E6 extends Object?>
     with TupleN7<E0, E1, E2, E3, E4, E5, E6>
-    implements ProductType {
+    implements ProductType, TupleN7<E0, E1, E2, E3, E4, E5, E6> {
   final E0 e0;
   final E1 e1;
   final E2 e2;
@@ -212,6 +234,9 @@ class Tuple7<
 
   const Tuple7(this.e0, this.e1, this.e2, this.e3, this.e4, this.e5, this.e6)
       : super();
+
+  factory Tuple7.fromTupleN(TupleN7<E0, E1, E2, E3, E4, E5, E6> tpl) =>
+      Tuple7(tpl.e0, tpl.e1, tpl.e2, tpl.e3, tpl.e4, tpl.e5, tpl.e6);
 
   @override
   ProductRuntimeType get runtimeType =>
@@ -248,7 +273,7 @@ class Tuple8<
         E6 extends Object?,
         E7 extends Object?>
     with TupleN8<E0, E1, E2, E3, E4, E5, E6, E7>
-    implements ProductType {
+    implements ProductType, TupleN8<E0, E1, E2, E3, E4, E5, E6, E7> {
   final E0 e0;
   final E1 e1;
   final E2 e2;
@@ -261,6 +286,9 @@ class Tuple8<
   const Tuple8(
       this.e0, this.e1, this.e2, this.e3, this.e4, this.e5, this.e6, this.e7)
       : super();
+
+  factory Tuple8.fromTupleN(TupleN8<E0, E1, E2, E3, E4, E5, E6, E7> tpl) =>
+      Tuple8(tpl.e0, tpl.e1, tpl.e2, tpl.e3, tpl.e4, tpl.e5, tpl.e6, tpl.e7);
 
   @override
   ProductRuntimeType get runtimeType =>
@@ -299,7 +327,7 @@ class Tuple9<
         E7 extends Object?,
         E8 extends Object?>
     with TupleN9<E0, E1, E2, E3, E4, E5, E6, E7, E8>
-    implements ProductType {
+    implements ProductType, TupleN9<E0, E1, E2, E3, E4, E5, E6, E7, E8> {
   final E0 e0;
   final E1 e1;
   final E2 e2;
@@ -313,6 +341,10 @@ class Tuple9<
   const Tuple9(this.e0, this.e1, this.e2, this.e3, this.e4, this.e5, this.e6,
       this.e7, this.e8)
       : super();
+
+  factory Tuple9.fromTupleN(TupleN9<E0, E1, E2, E3, E4, E5, E6, E7, E8> tpl) =>
+      Tuple9(tpl.e0, tpl.e1, tpl.e2, tpl.e3, tpl.e4, tpl.e5, tpl.e6, tpl.e7,
+          tpl.e8);
 
   @override
   ProductRuntimeType get runtimeType =>
@@ -353,7 +385,7 @@ class Tuple10<
         E8 extends Object?,
         E9 extends Object?>
     with TupleN10<E0, E1, E2, E3, E4, E5, E6, E7, E8, E9>
-    implements ProductType {
+    implements ProductType, TupleN10<E0, E1, E2, E3, E4, E5, E6, E7, E8, E9> {
   final E0 e0;
   final E1 e1;
   final E2 e2;
@@ -368,6 +400,11 @@ class Tuple10<
   const Tuple10(this.e0, this.e1, this.e2, this.e3, this.e4, this.e5, this.e6,
       this.e7, this.e8, this.e9)
       : super();
+
+  factory Tuple10.fromTupleN(
+          TupleN10<E0, E1, E2, E3, E4, E5, E6, E7, E8, E9> tpl) =>
+      Tuple10(tpl.e0, tpl.e1, tpl.e2, tpl.e3, tpl.e4, tpl.e5, tpl.e6, tpl.e7,
+          tpl.e8, tpl.e9);
 
   @override
   ProductRuntimeType get runtimeType =>
@@ -431,7 +468,9 @@ class Tuple11<
         E9 extends Object?,
         E10 extends Object?>
     with TupleN11<E0, E1, E2, E3, E4, E5, E6, E7, E8, E9, E10>
-    implements ProductType {
+    implements
+        ProductType,
+        TupleN11<E0, E1, E2, E3, E4, E5, E6, E7, E8, E9, E10> {
   final E0 e0;
   final E1 e1;
   final E2 e2;
@@ -447,6 +486,11 @@ class Tuple11<
   const Tuple11(this.e0, this.e1, this.e2, this.e3, this.e4, this.e5, this.e6,
       this.e7, this.e8, this.e9, this.e10)
       : super();
+
+  factory Tuple11.fromTupleN(
+          TupleN11<E0, E1, E2, E3, E4, E5, E6, E7, E8, E9, E10> tpl) =>
+      Tuple11(tpl.e0, tpl.e1, tpl.e2, tpl.e3, tpl.e4, tpl.e5, tpl.e6, tpl.e7,
+          tpl.e8, tpl.e9, tpl.e10);
 
   @override
   ProductRuntimeType get runtimeType =>
@@ -514,7 +558,9 @@ class Tuple12<
         E10 extends Object?,
         E11 extends Object?>
     with TupleN12<E0, E1, E2, E3, E4, E5, E6, E7, E8, E9, E10, E11>
-    implements ProductType {
+    implements
+        ProductType,
+        TupleN12<E0, E1, E2, E3, E4, E5, E6, E7, E8, E9, E10, E11> {
   final E0 e0;
   final E1 e1;
   final E2 e2;
@@ -531,6 +577,11 @@ class Tuple12<
   const Tuple12(this.e0, this.e1, this.e2, this.e3, this.e4, this.e5, this.e6,
       this.e7, this.e8, this.e9, this.e10, this.e11)
       : super();
+
+  factory Tuple12.fromTupleN(
+          TupleN12<E0, E1, E2, E3, E4, E5, E6, E7, E8, E9, E10, E11> tpl) =>
+      Tuple12(tpl.e0, tpl.e1, tpl.e2, tpl.e3, tpl.e4, tpl.e5, tpl.e6, tpl.e7,
+          tpl.e8, tpl.e9, tpl.e10, tpl.e11);
 
   @override
   ProductRuntimeType get runtimeType =>
@@ -602,7 +653,9 @@ class Tuple13<
         E11 extends Object?,
         E12 extends Object?>
     with TupleN13<E0, E1, E2, E3, E4, E5, E6, E7, E8, E9, E10, E11, E12>
-    implements ProductType {
+    implements
+        ProductType,
+        TupleN13<E0, E1, E2, E3, E4, E5, E6, E7, E8, E9, E10, E11, E12> {
   final E0 e0;
   final E1 e1;
   final E2 e2;
@@ -620,6 +673,12 @@ class Tuple13<
   const Tuple13(this.e0, this.e1, this.e2, this.e3, this.e4, this.e5, this.e6,
       this.e7, this.e8, this.e9, this.e10, this.e11, this.e12)
       : super();
+
+  factory Tuple13.fromTupleN(
+          TupleN13<E0, E1, E2, E3, E4, E5, E6, E7, E8, E9, E10, E11, E12>
+              tpl) =>
+      Tuple13(tpl.e0, tpl.e1, tpl.e2, tpl.e3, tpl.e4, tpl.e5, tpl.e6, tpl.e7,
+          tpl.e8, tpl.e9, tpl.e10, tpl.e11, tpl.e12);
 
   @override
   ProductRuntimeType get runtimeType => ProductRuntimeType(
@@ -696,7 +755,9 @@ class Tuple14<
         E12 extends Object?,
         E13 extends Object?>
     with TupleN14<E0, E1, E2, E3, E4, E5, E6, E7, E8, E9, E10, E11, E12, E13>
-    implements ProductType {
+    implements
+        ProductType,
+        TupleN14<E0, E1, E2, E3, E4, E5, E6, E7, E8, E9, E10, E11, E12, E13> {
   final E0 e0;
   final E1 e1;
   final E2 e2;
@@ -715,6 +776,12 @@ class Tuple14<
   const Tuple14(this.e0, this.e1, this.e2, this.e3, this.e4, this.e5, this.e6,
       this.e7, this.e8, this.e9, this.e10, this.e11, this.e12, this.e13)
       : super();
+
+  factory Tuple14.fromTupleN(
+          TupleN14<E0, E1, E2, E3, E4, E5, E6, E7, E8, E9, E10, E11, E12, E13>
+              tpl) =>
+      Tuple14(tpl.e0, tpl.e1, tpl.e2, tpl.e3, tpl.e4, tpl.e5, tpl.e6, tpl.e7,
+          tpl.e8, tpl.e9, tpl.e10, tpl.e11, tpl.e12, tpl.e13);
 
   @override
   ProductRuntimeType get runtimeType => ProductRuntimeType(
@@ -798,7 +865,9 @@ class Tuple15<
         TupleN15<E0, E1, E2, E3, E4, E5, E6, E7, E8, E9, E10, E11, E12, E13,
             E14>
     implements
-        ProductType {
+        ProductType,
+        TupleN15<E0, E1, E2, E3, E4, E5, E6, E7, E8, E9, E10, E11, E12, E13,
+            E14> {
   final E0 e0;
   final E1 e1;
   final E2 e2;
@@ -832,6 +901,13 @@ class Tuple15<
       this.e13,
       this.e14)
       : super();
+
+  factory Tuple15.fromTupleN(
+          TupleN15<E0, E1, E2, E3, E4, E5, E6, E7, E8, E9, E10, E11, E12, E13,
+                  E14>
+              tpl) =>
+      Tuple15(tpl.e0, tpl.e1, tpl.e2, tpl.e3, tpl.e4, tpl.e5, tpl.e6, tpl.e7,
+          tpl.e8, tpl.e9, tpl.e10, tpl.e11, tpl.e12, tpl.e13, tpl.e14);
 
   @override
   ProductRuntimeType get runtimeType => ProductRuntimeType(
@@ -919,7 +995,9 @@ class Tuple16<
         TupleN16<E0, E1, E2, E3, E4, E5, E6, E7, E8, E9, E10, E11, E12, E13,
             E14, E15>
     implements
-        ProductType {
+        ProductType,
+        TupleN16<E0, E1, E2, E3, E4, E5, E6, E7, E8, E9, E10, E11, E12, E13,
+            E14, E15> {
   final E0 e0;
   final E1 e1;
   final E2 e2;
@@ -955,6 +1033,13 @@ class Tuple16<
       this.e14,
       this.e15)
       : super();
+
+  factory Tuple16.fromTupleN(
+          TupleN16<E0, E1, E2, E3, E4, E5, E6, E7, E8, E9, E10, E11, E12, E13,
+                  E14, E15>
+              tpl) =>
+      Tuple16(tpl.e0, tpl.e1, tpl.e2, tpl.e3, tpl.e4, tpl.e5, tpl.e6, tpl.e7,
+          tpl.e8, tpl.e9, tpl.e10, tpl.e11, tpl.e12, tpl.e13, tpl.e14, tpl.e15);
 
   @override
   ProductRuntimeType get runtimeType => ProductRuntimeType(
@@ -1046,7 +1131,9 @@ class Tuple17<
         TupleN17<E0, E1, E2, E3, E4, E5, E6, E7, E8, E9, E10, E11, E12, E13,
             E14, E15, E16>
     implements
-        ProductType {
+        ProductType,
+        TupleN17<E0, E1, E2, E3, E4, E5, E6, E7, E8, E9, E10, E11, E12, E13,
+            E14, E15, E16> {
   final E0 e0;
   final E1 e1;
   final E2 e2;
@@ -1084,6 +1171,29 @@ class Tuple17<
       this.e15,
       this.e16)
       : super();
+
+  factory Tuple17.fromTupleN(
+          TupleN17<E0, E1, E2, E3, E4, E5, E6, E7, E8, E9, E10, E11, E12, E13,
+                  E14, E15, E16>
+              tpl) =>
+      Tuple17(
+          tpl.e0,
+          tpl.e1,
+          tpl.e2,
+          tpl.e3,
+          tpl.e4,
+          tpl.e5,
+          tpl.e6,
+          tpl.e7,
+          tpl.e8,
+          tpl.e9,
+          tpl.e10,
+          tpl.e11,
+          tpl.e12,
+          tpl.e13,
+          tpl.e14,
+          tpl.e15,
+          tpl.e16);
 
   @override
   ProductRuntimeType get runtimeType => ProductRuntimeType([
@@ -1196,7 +1306,9 @@ class Tuple18<
         TupleN18<E0, E1, E2, E3, E4, E5, E6, E7, E8, E9, E10, E11, E12, E13,
             E14, E15, E16, E17>
     implements
-        ProductType {
+        ProductType,
+        TupleN18<E0, E1, E2, E3, E4, E5, E6, E7, E8, E9, E10, E11, E12, E13,
+            E14, E15, E16, E17> {
   final E0 e0;
   final E1 e1;
   final E2 e2;
@@ -1236,6 +1348,30 @@ class Tuple18<
       this.e16,
       this.e17)
       : super();
+
+  factory Tuple18.fromTupleN(
+          TupleN18<E0, E1, E2, E3, E4, E5, E6, E7, E8, E9, E10, E11, E12, E13,
+                  E14, E15, E16, E17>
+              tpl) =>
+      Tuple18(
+          tpl.e0,
+          tpl.e1,
+          tpl.e2,
+          tpl.e3,
+          tpl.e4,
+          tpl.e5,
+          tpl.e6,
+          tpl.e7,
+          tpl.e8,
+          tpl.e9,
+          tpl.e10,
+          tpl.e11,
+          tpl.e12,
+          tpl.e13,
+          tpl.e14,
+          tpl.e15,
+          tpl.e16,
+          tpl.e17);
 
   @override
   ProductRuntimeType get runtimeType => ProductRuntimeType([
@@ -1353,7 +1489,9 @@ class Tuple19<
         TupleN19<E0, E1, E2, E3, E4, E5, E6, E7, E8, E9, E10, E11, E12, E13,
             E14, E15, E16, E17, E18>
     implements
-        ProductType {
+        ProductType,
+        TupleN19<E0, E1, E2, E3, E4, E5, E6, E7, E8, E9, E10, E11, E12, E13,
+            E14, E15, E16, E17, E18> {
   final E0 e0;
   final E1 e1;
   final E2 e2;
@@ -1395,6 +1533,31 @@ class Tuple19<
       this.e17,
       this.e18)
       : super();
+
+  factory Tuple19.fromTupleN(
+          TupleN19<E0, E1, E2, E3, E4, E5, E6, E7, E8, E9, E10, E11, E12, E13,
+                  E14, E15, E16, E17, E18>
+              tpl) =>
+      Tuple19(
+          tpl.e0,
+          tpl.e1,
+          tpl.e2,
+          tpl.e3,
+          tpl.e4,
+          tpl.e5,
+          tpl.e6,
+          tpl.e7,
+          tpl.e8,
+          tpl.e9,
+          tpl.e10,
+          tpl.e11,
+          tpl.e12,
+          tpl.e13,
+          tpl.e14,
+          tpl.e15,
+          tpl.e16,
+          tpl.e17,
+          tpl.e18);
 
   @override
   ProductRuntimeType get runtimeType => ProductRuntimeType([
@@ -1517,7 +1680,9 @@ class Tuple20<
         TupleN20<E0, E1, E2, E3, E4, E5, E6, E7, E8, E9, E10, E11, E12, E13,
             E14, E15, E16, E17, E18, E19>
     implements
-        ProductType {
+        ProductType,
+        TupleN20<E0, E1, E2, E3, E4, E5, E6, E7, E8, E9, E10, E11, E12, E13,
+            E14, E15, E16, E17, E18, E19> {
   final E0 e0;
   final E1 e1;
   final E2 e2;
@@ -1561,6 +1726,32 @@ class Tuple20<
       this.e18,
       this.e19)
       : super();
+
+  factory Tuple20.fromTupleN(
+          TupleN20<E0, E1, E2, E3, E4, E5, E6, E7, E8, E9, E10, E11, E12, E13,
+                  E14, E15, E16, E17, E18, E19>
+              tpl) =>
+      Tuple20(
+          tpl.e0,
+          tpl.e1,
+          tpl.e2,
+          tpl.e3,
+          tpl.e4,
+          tpl.e5,
+          tpl.e6,
+          tpl.e7,
+          tpl.e8,
+          tpl.e9,
+          tpl.e10,
+          tpl.e11,
+          tpl.e12,
+          tpl.e13,
+          tpl.e14,
+          tpl.e15,
+          tpl.e16,
+          tpl.e17,
+          tpl.e18,
+          tpl.e19);
 
   @override
   ProductRuntimeType get runtimeType => ProductRuntimeType([
