@@ -36,25 +36,22 @@ class DoublyLinkedEventSourcedModelCodec<
             final entries =
                 ArgumentError.checkNotNull(m['entries'] as List?).cast<E>();
             DoubleLinkedQueueEntry<E>? cursor;
-            DoubleLinkedQueueEntry<E>? queue;
+            DoubleLinkedQueueEntry<E> entry = _SentryDoubleLinkedQueueEntry();
 
             for (var i = 0; i < entries.length; i++) {
               final e = entries[i];
-              if (queue == null) {
-                queue = DoubleLinkedQueueEntry(e);
-                continue;
-              }
-              queue.append(e);
-              queue = queue.nextEntry();
+              entry.append(e);
+              entry = entry.nextEntry()!;
+
               if (i == cursorI) {
-                cursor = queue;
+                cursor = entry;
               }
             }
 
             return DoublyLinkedEventSourcedModel<S, B, E>._(
               initialState: ArgumentError.checkNotNull(m['initialState'] as S?),
               state: m['state'] as S,
-              cursor: cursor,
+              cursor: cursor ?? entry,
             );
           });
 
@@ -64,7 +61,7 @@ class DoublyLinkedEventSourcedModelCodec<
             final entries = <E>[];
             int? cursorI;
             var i = 0;
-            for (final e in _walkDoublyLinkedList(t._eventCursor!)) {
+            for (final e in _walkDoublyLinkedList(t._eventCursor).skip(1)) {
               entries.add(e.element);
               if (e == t._eventCursor) {
                 cursorI = i;
@@ -80,6 +77,35 @@ class DoublyLinkedEventSourcedModelCodec<
           });
 }
 
+class _SentryDoubleLinkedQueueEntry<E> implements DoubleLinkedQueueEntry<E> {
+  @override
+  Never get element => throw Error();
+  set element(E e) => throw Error();
+
+  DoubleLinkedQueueEntry<E>? next;
+
+  @override
+  void append(E e) {
+    if (next == null) {
+      next = DoubleLinkedQueueEntry(e);
+      return;
+    }
+    throw Error();
+  }
+
+  @override
+  DoubleLinkedQueueEntry<E>? nextEntry() => next;
+
+  @override
+  void prepend(E e) => throw Error();
+
+  @override
+  DoubleLinkedQueueEntry<E>? previousEntry() => null;
+
+  @override
+  Never remove() => throw Error();
+}
+
 /// An [UndoableEventSourcedModel] which uses an [DoubleLinkedQueueEntry] as the
 /// backing data structure.
 class DoublyLinkedEventSourcedModel<
@@ -90,27 +116,26 @@ class DoublyLinkedEventSourcedModel<
   /// Create an [DoublyLinkedEventSourcedModel].
   DoublyLinkedEventSourcedModel(S initialState)
       : _snapshot = initialState,
-        _eventCursor = DoubleLinkedQueueEntry<E>(null),
         super(initialState);
 
   DoublyLinkedEventSourcedModel._(
       {required S initialState,
       required S state,
       DoubleLinkedQueueEntry<E>? cursor})
-      : _eventCursor = cursor,
+      : _eventCursor = cursor ?? _SentryDoubleLinkedQueueEntry(),
         _snapshot = state,
         super(initialState);
 
-  DoubleLinkedQueueEntry<E>? _eventCursor = DoubleLinkedQueueEntry<E>(null);
+  DoubleLinkedQueueEntry<E> _eventCursor = _SentryDoubleLinkedQueueEntry();
   @override
   bool canUndo() {
     // we are at the beggining, therefore there aren't any events, so we can't
     // undo
-    if (_eventCursor?.element == null) {
+    if (_eventCursor.previousEntry() == null) {
       return false;
     }
 
-    final previous = _eventCursor!.previousEntry();
+    final previous = _eventCursor.previousEntry();
     assert(previous != null);
     return true;
   }
@@ -121,8 +146,8 @@ class DoublyLinkedEventSourcedModel<
       return false;
     }
 
-    final previous = _eventCursor!.previousEntry();
-    final event = _eventCursor!.element;
+    final previous = _eventCursor.previousEntry()!;
+    final event = _eventCursor.element;
     _eventCursor = previous;
     _snapshot = snapshot.rebuild(event.undoTo);
     return true;
@@ -130,7 +155,7 @@ class DoublyLinkedEventSourcedModel<
 
   @override
   bool canRedo() {
-    final next = _eventCursor!.nextEntry();
+    final next = _eventCursor.nextEntry();
     // we are at the head, so we can't redo.
     if (next == null) {
       return false;
@@ -143,7 +168,7 @@ class DoublyLinkedEventSourcedModel<
     if (!canRedo()) {
       return false;
     }
-    final next = _eventCursor!.nextEntry()!;
+    final next = _eventCursor.nextEntry()!;
 
     final nextE = next.element;
     _eventCursor = next;
@@ -152,7 +177,7 @@ class DoublyLinkedEventSourcedModel<
   }
 
   void _removeEventsAfterTheCursor() {
-    var next = _eventCursor!.nextEntry();
+    var next = _eventCursor.nextEntry();
     while (next != null) {
       final toRemove = next;
       next = toRemove.nextEntry();
@@ -161,8 +186,8 @@ class DoublyLinkedEventSourcedModel<
   }
 
   void _addAndMoveCursor(E event) {
-    _eventCursor!.append(event);
-    _eventCursor = _eventCursor!.nextEntry();
+    _eventCursor.append(event);
+    _eventCursor = _eventCursor.nextEntry()!;
   }
 
   @override
