@@ -1,14 +1,18 @@
 name: utils
 description: An collection with Functional utils and some data structures
-version: 2.0.0-nullsafety.0
+version: 2.1.0
 homepage: https://github.com/kalildev
 
 environment:
-  sdk: '>=2.12.0 <3.0.0'
+  sdk: '>=2.16.0-0.0 <3.0.0'
 
 dependencies:
-  meta: ^1.2.4 
+  meta: ^1.2.4
+  collection:
+  adt_annotation:
 
 dev_dependencies:
+  adt_generator:
+  build_runner:
   demostudo_lint: ^1.0.0
   test: ^1.14.4
