@@ -6,7 +6,6 @@ export 'event_bus.dart';
 export 'event_sourcing.dart';
 export 'event_sourcing_data.dart';
 export 'extensions.dart';
-export 'id.dart';
 export 'injector.dart';
 export 'maybe.dart';
 export 'stream_combine.dart';
