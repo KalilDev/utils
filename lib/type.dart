@@ -14,7 +14,7 @@ import 'package:collection/collection.dart';
 ///   (is an Endofunctor)
 /// * Additionally, it has [pure] and [lift] capability. (is an Applicative
 ///   functor)
-abstract class Monad<A> implements Applicative<A>, Monoid {
+abstract class Monad<A> implements Applicative<A> {
   const Monad();
 
   // Constructors
@@ -131,70 +131,6 @@ class ProductRuntimeType extends CompositeRuntimeType<ProductRuntimeType> {
 
   @override
   String toString([String? nop]) => super.toString('*');
-}
-abstract class Monoid {}
-
-abstract class MonadWriter<W extends Monoid> {
-  /*    -- | @'writer' (a,w)@ embeds a simple writer action.
-    writer :: (a,w) -> m a
-    writer ~(a, w) = do
-      tell w
-      return a
-
-    -- | @'tell' w@ is an action that produces the output @w@.
-    tell   :: w -> m ()
-    tell w = writer ((),w)
-
-    -- | @'listen' m@ is an action that executes the action @m@ and adds
-    -- its output to the value of the computation.
-    listen :: m a -> m (a, w)
-    -- | @'pass' m@ is an action that executes the action @m@, which
-    -- returns a value and a function, and returns the value, applying
-    -- the function to the output.
-    pass   :: m (a, w -> w) -> m a*/
-  /// -- | @'writer' (a,w)@ embeds a simple writer action.
-  /// writer :: (a,w) -> m a
-  Monad<A> writer<A>(Tuple<A, W> t);
-
-  /// -- | @'tell' w@ is an action that produces the output @w@.
-  /// tell   :: w -> m ()
-  // ignore: prefer_void_to_null
-  Monad<Null> tell(W w);
-
-  /// -- | @'listen' m@ is an action that executes the action @m@ and adds
-  /// -- its output to the value of the computation.
-  /// listen :: m a -> m (a, w)
-  Monad<Tuple<A, W>> listen<A>(Monad<A> m);
-
-  /// -- | @'pass' m@ is an action that executes the action @m@, which
-  /// -- returns a value and a function, and returns the value, applying
-  /// -- the function to the output.
-  /// pass   :: m (a, w -> w) -> m a
-  Monad<A> pass<A>(Monad<Tuple<A, W Function(W)>> m);
-}
-
-abstract class MonadReader<R> {
-  Monad<R> ask();
-  Monad<A> local<A>(R Function(R) r, covariant Monad<A> m);
-  Monad<A> reader<A>(A Function(R) fn);
-}
-
-abstract class MonadState<S> {
-  /// -- | Return the state from the internals of the monad.
-  /// get :: m s
-  Monad<S> get();
-
-  /// -- | Replace the state inside the monad.
-  /// put :: s -> m ()
-  // ignore: prefer_void_to_null
-  Monad<Null> put(S s);
-
-  /// -- | Embed a simple state action into the monad.
-  /// state :: (s -> (a, s)) -> m a
-  Monad<A> state<A>(Tuple<A, S> Function(S) fn) =>
-      get().bind((s) => fn(s).visit(
-            (a, s) => put(s).unit(a),
-          ));
 }
 
 /// An [Functor] type is an type which can map (with [fmap<B>]) values from one
