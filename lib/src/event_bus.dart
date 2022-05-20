@@ -184,7 +184,7 @@ class _EitherListener<E, Event extends IMayThrowAn<E>> extends _Listener {
     if (error is! E) {
       throw TypeError();
     }
-    _controller.add(Either.left<E, Event>(error as E));
+    _controller.add(Either<E, Event>.left(error as E));
   }
 
   @override
@@ -193,7 +193,7 @@ class _EitherListener<E, Event extends IMayThrowAn<E>> extends _Listener {
       throw TypeError();
     }
     didAdd = true;
-    _controller.add(Either.right<E, Event>(event));
+    _controller.add(Either<E, Event>.right(event));
   }
 
   @override
