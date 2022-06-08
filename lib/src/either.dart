@@ -19,9 +19,9 @@ T _notNull<T>(T? v) => ArgumentError.checkNotNull(v);
       },
     }),
     mixin: [
-      T(#_EitherMonadOps, [T(#a), T(#b)]),
-      T(#_EitherBiFunctorOps, [T(#a), T(#b)]),
-      T(#_EitherExtraOps, [T(#a), T(#b)]),
+      T(#_EitherMonadOps, args: [T(#a), T(#b)]),
+      T(#_EitherBiFunctorOps, args: [T(#a), T(#b)]),
+      T(#_EitherExtraOps, args: [T(#a), T(#b)]),
     ])
 
 /// An [Monad<B>] which contains either an [Left<A>] value or an [Right<B>]

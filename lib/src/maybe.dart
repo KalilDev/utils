@@ -15,8 +15,8 @@ T _identity<T>(T v) => v;
       #None: {},
     }),
     mixin: [
-      T(#_MaybeMonadOps, [T(#t)]),
-      T(#_MaybeExtraOps, [T(#t)]),
+      T(#_MaybeMonadOps, args: [T(#t)]),
+      T(#_MaybeExtraOps, args: [T(#t)]),
     ])
 
 /// An opaque representation of either an value ([Just]) or the abscence of one

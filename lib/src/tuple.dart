@@ -19,7 +19,7 @@ abstract class TupleN0 implements TupleN {
 
 @data(#Tuple1, [Tp(#E0)], Tuple([T(#E0)]),
     mixin: [
-      T(#TupleN1, [T(#E0)])
+      T(#TupleN1, args: [T(#E0)])
     ])
 const Type _tuple1 = Tuple1;
 
@@ -35,7 +35,7 @@ abstract class TupleN1<E0> implements TupleN0 {
   [Tp(#E0), Tp(#E1)],
   Tuple([T(#E0), T(#E1)]),
   mixin: [
-    T(#TupleN2, [T(#E0), T(#E1)])
+    T(#TupleN2, args: [T(#E0), T(#E1)])
   ],
 )
 const Type _Tuple2 = Tuple2;
@@ -50,7 +50,7 @@ abstract class TupleN2<E0, E1> implements TupleN1<E0> {
   [Tp(#E0), Tp(#E1), Tp(#E2)],
   Tuple([T(#E0), T(#E1), T(#E2)]),
   mixin: [
-    T(#TupleN3, [T(#E0), T(#E1), T(#E2)])
+    T(#TupleN3, args: [T(#E0), T(#E1), T(#E2)])
   ],
 )
 const Type _Tuple3 = Tuple3;
@@ -65,7 +65,7 @@ abstract class TupleN3<E0, E1, E2> implements TupleN2<E0, E1> {
   [Tp(#E0), Tp(#E1), Tp(#E2), Tp(#E3)],
   Tuple([T(#E0), T(#E1), T(#E2), T(#E3)]),
   mixin: [
-    T(#TupleN4, [T(#E0), T(#E1), T(#E2), T(#E3)])
+    T(#TupleN4, args: [T(#E0), T(#E1), T(#E2), T(#E3)])
   ],
 )
 const Type _Tuple4 = Tuple4;
@@ -80,7 +80,7 @@ abstract class TupleN4<E0, E1, E2, E3> implements TupleN3<E0, E1, E2> {
   [Tp(#E0), Tp(#E1), Tp(#E2), Tp(#E3), Tp(#E4)],
   Tuple([T(#E0), T(#E1), T(#E2), T(#E3), T(#E4)]),
   mixin: [
-    T(#TupleN5, [T(#E0), T(#E1), T(#E2), T(#E3), T(#E4)])
+    T(#TupleN5, args: [T(#E0), T(#E1), T(#E2), T(#E3), T(#E4)])
   ],
 )
 const Type _Tuple5 = Tuple5;
@@ -96,7 +96,7 @@ abstract class TupleN5<E0, E1, E2, E3, E4> implements TupleN4<E0, E1, E2, E3> {
   [Tp(#E0), Tp(#E1), Tp(#E2), Tp(#E3), Tp(#E4), Tp(#E5)],
   Tuple([T(#E0), T(#E1), T(#E2), T(#E3), T(#E4), T(#E5)]),
   mixin: [
-    T(#TupleN6, [T(#E0), T(#E1), T(#E2), T(#E3), T(#E4), T(#E5)])
+    T(#TupleN6, args: [T(#E0), T(#E1), T(#E2), T(#E3), T(#E4), T(#E5)])
   ],
 )
 const Type _Tuple6 = Tuple6;
@@ -113,7 +113,7 @@ abstract class TupleN6<E0, E1, E2, E3, E4, E5>
   [Tp(#E0), Tp(#E1), Tp(#E2), Tp(#E3), Tp(#E4), Tp(#E5), Tp(#E6)],
   Tuple([T(#E0), T(#E1), T(#E2), T(#E3), T(#E4), T(#E5), T(#E6)]),
   mixin: [
-    T(#TupleN7, [T(#E0), T(#E1), T(#E2), T(#E3), T(#E4), T(#E5), T(#E6)])
+    T(#TupleN7, args: [T(#E0), T(#E1), T(#E2), T(#E3), T(#E4), T(#E5), T(#E6)])
   ],
 )
 const Type _Tuple7 = Tuple7;
@@ -131,7 +131,7 @@ abstract class TupleN7<E0, E1, E2, E3, E4, E5, E6>
   Tuple([T(#E0), T(#E1), T(#E2), T(#E3), T(#E4), T(#E5), T(#E6), T(#E7)]),
   mixin: [
     T(#TupleN8,
-        [T(#E0), T(#E1), T(#E2), T(#E3), T(#E4), T(#E5), T(#E6), T(#E7)])
+        args: [T(#E0), T(#E1), T(#E2), T(#E3), T(#E4), T(#E5), T(#E6), T(#E7)])
   ],
 )
 const Type _Tuple8 = Tuple8;
@@ -160,7 +160,7 @@ abstract class TupleN8<E0, E1, E2, E3, E4, E5, E6, E7>
   Tuple(
       [T(#E0), T(#E1), T(#E2), T(#E3), T(#E4), T(#E5), T(#E6), T(#E7), T(#E8)]),
   mixin: [
-    T(#TupleN9, [
+    T(#TupleN9, args: [
       T(#E0),
       T(#E1),
       T(#E2),
@@ -210,7 +210,7 @@ abstract class TupleN9<E0, E1, E2, E3, E4, E5, E6, E7, E8>
     T(#E9)
   ]),
   mixin: [
-    T(#TupleN10, [
+    T(#TupleN10, args: [
       T(#E0),
       T(#E1),
       T(#E2),
@@ -262,7 +262,7 @@ abstract class TupleN10<E0, E1, E2, E3, E4, E5, E6, E7, E8, E9>
     T(#E10)
   ]),
   mixin: [
-    T(#TupleN11, [
+    T(#TupleN11, args: [
       T(#E0),
       T(#E1),
       T(#E2),
@@ -327,7 +327,7 @@ abstract class TupleN11<E0, E1, E2, E3, E4, E5, E6, E7, E8, E9, E10>
     T(#E11)
   ]),
   mixin: [
-    T(#TupleN12, [
+    T(#TupleN12, args: [
       T(#E0),
       T(#E1),
       T(#E2),
@@ -396,7 +396,7 @@ abstract class TupleN12<E0, E1, E2, E3, E4, E5, E6, E7, E8, E9, E10, E11>
     T(#E12)
   ]),
   mixin: [
-    T(#TupleN13, [
+    T(#TupleN13, args: [
       T(#E0),
       T(#E1),
       T(#E2),
@@ -469,7 +469,7 @@ abstract class TupleN13<E0, E1, E2, E3, E4, E5, E6, E7, E8, E9, E10, E11, E12>
     T(#E13)
   ]),
   mixin: [
-    T(#TupleN14, [
+    T(#TupleN14, args: [
       T(#E0),
       T(#E1),
       T(#E2),
@@ -535,7 +535,7 @@ abstract class TupleN14<E0, E1, E2, E3, E4, E5, E6, E7, E8, E9, E10, E11, E12,
     T(#E14)
   ]),
   mixin: [
-    T(#TupleN15, [
+    T(#TupleN15, args: [
       T(#E0),
       T(#E1),
       T(#E2),
@@ -605,7 +605,7 @@ abstract class TupleN15<E0, E1, E2, E3, E4, E5, E6, E7, E8, E9, E10, E11, E12,
     T(#E15)
   ]),
   mixin: [
-    T(#TupleN16, [
+    T(#TupleN16, args: [
       T(#E0),
       T(#E1),
       T(#E2),
@@ -680,7 +680,7 @@ abstract class TupleN16<E0, E1, E2, E3, E4, E5, E6, E7, E8, E9, E10, E11, E12,
     T(#E16)
   ]),
   mixin: [
-    T(#TupleN17, [
+    T(#TupleN17, args: [
       T(#E0),
       T(#E1),
       T(#E2),
@@ -774,7 +774,7 @@ abstract class TupleN17<E0, E1, E2, E3, E4, E5, E6, E7, E8, E9, E10, E11, E12,
     T(#E17)
   ]),
   mixin: [
-    T(#TupleN18, [
+    T(#TupleN18, args: [
       T(#E0),
       T(#E1),
       T(#E2),
@@ -872,7 +872,7 @@ abstract class TupleN18<E0, E1, E2, E3, E4, E5, E6, E7, E8, E9, E10, E11, E12,
     T(#E18)
   ]),
   mixin: [
-    T(#TupleN19, [
+    T(#TupleN19, args: [
       T(#E0),
       T(#E1),
       T(#E2),
@@ -974,7 +974,7 @@ abstract class TupleN19<E0, E1, E2, E3, E4, E5, E6, E7, E8, E9, E10, E11, E12,
     T(#E19)
   ]),
   mixin: [
-    T(#TupleN20, [
+    T(#TupleN20, args: [
       T(#E0),
       T(#E1),
       T(#E2),
