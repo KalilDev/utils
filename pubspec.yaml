@@ -1,4 +1,4 @@
-name: utils
+name: kalil_utils
 description: An collection with Functional utils and some data structures
 version: 3.0.3
 homepage: https://github.com/kalildev/utils
@@ -7,12 +7,12 @@ environment:
   sdk: '>=2.16.0-0.0 <3.0.0'
 
 dependencies:
-  meta: ^1.2.4
-  collection:
   adt_annotation_base: ^3.0.0
+  collection: ^1.16.0
+  meta: ^1.2.4
 
 dev_dependencies:
-  adt_generator: ^3.0.0
-  build_runner:
-  demostudo_lint: ^1.0.0
-  test: ^1.14.4
+  adt_generator: ^3.0.1
+  build_runner: ^2.0.0
+  lint: ^1.10.0
+  test: ^1.21.1

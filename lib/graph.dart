@@ -1,4 +1,4 @@
-library utils.graph;
+library kalil_utils.graph;
 
 import 'maybe.dart';
 

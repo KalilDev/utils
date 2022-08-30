@@ -1,6 +1,6 @@
-import 'package:utils/graph.dart';
-import 'package:utils/injector.dart';
-import 'package:utils/src/injector.dart';
+import 'package:kalil_utils/graph.dart';
+import 'package:kalil_utils/injector.dart';
+import 'package:kalil_utils/src/injector.dart';
 
 class AnInjectedEndpoint implements IEndpoint {
   @override

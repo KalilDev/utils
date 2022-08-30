@@ -1,4 +1,4 @@
-library utils.curry;
+library kalil_utils.curry;
 /*
    Function typedefs to use instead of the regular Function type notation.
 */

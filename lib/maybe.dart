@@ -1,4 +1,4 @@
-library utils.maybe;
+library kalil_utils.maybe;
 
 import 'package:meta/meta.dart';
 import 'either.dart';

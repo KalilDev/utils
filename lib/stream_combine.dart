@@ -1,4 +1,4 @@
-library utils.stream_combine;
+library kalil_utils.stream_combine;
 
 import 'dart:async';
 

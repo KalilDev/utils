@@ -1,4 +1,4 @@
-library utils;
+library kalil_utils;
 
 export 'curry.dart';
 export 'either.dart';

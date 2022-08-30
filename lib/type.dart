@@ -1,4 +1,4 @@
-library utils.type;
+library kalil_utils.type;
 
 import 'package:collection/collection.dart';
 

@@ -1,8 +1,8 @@
-library utils.stream_notifier;
+library kalil_utils.stream_notifier;
 
 import 'dart:async';
 
-import 'package:utils/graph.dart' show nothing;
+import 'package:kalil_utils/graph.dart' show nothing;
 
 import 'maybe.dart';
 

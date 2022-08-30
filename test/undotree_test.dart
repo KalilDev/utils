@@ -1,6 +1,6 @@
 import 'package:test/test.dart';
-import 'package:utils/graph.dart';
-import 'package:utils/undotree.dart';
+import 'package:kalil_utils/graph.dart';
+import 'package:kalil_utils/undotree.dart';
 
 String _treeString<T>(UndoTree<T> tree) => treeToString<UndoTreeNode<T>>(
       UndoTreeRootNode<T>(tree.tail),

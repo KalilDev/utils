@@ -1,4 +1,4 @@
-library utils.either;
+library kalil_utils.either;
 
 import 'dart:async';
 

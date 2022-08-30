@@ -1,4 +1,4 @@
-library utils.event_bus;
+library kalil_utils.event_bus;
 
 import 'dart:async';
 import 'either.dart';

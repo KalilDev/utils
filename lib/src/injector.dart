@@ -1,7 +1,7 @@
 import 'package:meta/meta.dart';
-import 'package:utils/curry.dart';
-import 'package:utils/injector.dart';
-import 'package:utils/maybe.dart';
+import 'package:kalil_utils/curry.dart';
+import 'package:kalil_utils/injector.dart';
+import 'package:kalil_utils/maybe.dart';
 
 import '../graph.dart';
 

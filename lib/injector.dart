@@ -1,7 +1,7 @@
-library utils.maybe;
+library kalil_utils.maybe;
 
 import 'package:meta/meta.dart';
-import 'package:utils/utils.dart';
+import 'package:kalil_utils/utils.dart';
 
 import 'graph.dart';
 import 'maybe.dart';

@@ -1,4 +1,4 @@
-library utils.tuple;
+library kalil_utils.tuple;
 
 import 'type.dart';
 import 'src/tuple.dart';

@@ -1,4 +1,4 @@
-library utils.extensions;
+library kalil_utils.extensions;
 
 import 'dart:async';
 
