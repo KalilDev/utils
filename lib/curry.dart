@@ -1,3 +1,4 @@
+library utils.curry;
 /*
    Function typedefs to use instead of the regular Function type notation.
 */

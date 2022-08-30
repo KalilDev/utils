@@ -1,3 +1,5 @@
+library utils.stream_notifier;
+
 import 'dart:async';
 
 import 'package:utils/graph.dart' show nothing;

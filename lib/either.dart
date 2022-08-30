@@ -1,3 +1,5 @@
+library utils.either;
+
 import 'dart:async';
 
 import 'maybe.dart';

@@ -1,3 +1,5 @@
+library utils.event_bus;
+
 import 'dart:async';
 import 'either.dart';
 import 'src/event_bus.dart';

@@ -1,3 +1,5 @@
+library utils.maybe;
+
 import 'package:meta/meta.dart';
 import 'package:utils/utils.dart';
 

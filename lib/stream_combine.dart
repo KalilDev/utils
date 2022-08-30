@@ -1,3 +1,5 @@
+library utils.stream_combine;
+
 import 'dart:async';
 
 extension FutureOrThen<T> on FutureOr<T> {

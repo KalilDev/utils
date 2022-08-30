@@ -1,3 +1,5 @@
+library utils.tuple;
+
 import 'type.dart';
 import 'src/tuple.dart';
 export 'src/tuple.dart';

@@ -1,3 +1,5 @@
+library utils.graph;
+
 import 'maybe.dart';
 
 /// An node in a graph. The edges may be interlinked or not. This interface is
@@ -163,6 +165,7 @@ enum TreeToGraphLinkType {
   /// linking to the parent
   interlinked
 }
+
 T? nothing<T>([Object? o]) => null;
 
 /// Convert an tree, which may have more than one [TreeNode] representing the
