@@ -9,7 +9,7 @@ environment:
 dependencies:
   meta: ^1.2.4
   collection:
-  adt_annotation: ^3.0.0
+  adt_annotation_base: ^3.0.0
 
 dev_dependencies:
   adt_generator: ^3.0.0
