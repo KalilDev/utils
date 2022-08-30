@@ -1,4 +1,4 @@
-import 'package:adt_annotation/adt_annotation.dart';
+import 'package:adt_annotation_base/adt_annotation_base.dart';
 part 'tuple.g.dart';
 
 abstract class TupleN {

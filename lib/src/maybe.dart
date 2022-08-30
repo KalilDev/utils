@@ -1,4 +1,4 @@
-import 'package:adt_annotation/adt_annotation.dart';
+import 'package:adt_annotation_base/adt_annotation_base.dart';
 
 import '../type.dart';
 part 'maybe.g.dart';
