@@ -33,7 +33,7 @@ T _notNull<T>(T? v) => ArgumentError.checkNotNull(v);
 /// Normally, an function that may fail may return an [Either]<[Exception], T>.
 const Type _either = Either;
 
-mixin _EitherBiFunctorOps<a, b> implements BiFunctor<a, b> {
+mixin _EitherBiFunctorOps<a, b> {
   Either<a, b> get _self => this as Either<a, b>;
 
   @override
@@ -54,7 +54,7 @@ mixin _EitherBiFunctorOps<a, b> implements BiFunctor<a, b> {
         right: (v) => Right<A1, B1>(b(v)),
       );
 }
-mixin _EitherMonadOps<a, b> implements Monad<b> {
+mixin _EitherMonadOps<a, b> {
   Either<a, b> get _self => this as Either<a, b>;
 
   @override

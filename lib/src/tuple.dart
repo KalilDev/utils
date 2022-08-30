@@ -1,4 +1,5 @@
 import 'package:adt_annotation_base/adt_annotation_base.dart';
+import '../type.dart' hide Tuple;
 part 'tuple.g.dart';
 
 abstract class TupleN {

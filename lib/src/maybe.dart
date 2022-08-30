@@ -29,7 +29,7 @@ T _identity<T>(T v) => v;
 /// Using the native 'is' operator can be used for checking if [this] is [None],
 /// but it's usage results in the arrow anti-pattern.
 const Type _maybe = Maybe;
-mixin _MaybeMonadOps<T> implements Monad<T> {
+mixin _MaybeMonadOps<T> {
   Maybe<T> get _self => this as Maybe<T>;
 
   @override
